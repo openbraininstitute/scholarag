@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools"]
+
+[project]
+name = "scholarag"
+authors = [
+    {name = "Blue Brain Project, EPFL"},
+]
+description = "Pipelines for RAG on scientific papers"
+readme = "README.md"
+requires-python = ">=3.10"
+dynamic = ["version"]
+dependencies = []
+
+[tool.setuptools.dynamic]
+version = {attr = "scholarag.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+namespaces = false
