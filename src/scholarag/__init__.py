@@ -1,3 +1,3 @@
 """Scientific literature RAG."""
 
-__version__ = "v0.0.1"
+__version__ = "v0.0.2"
