@@ -27,4 +27,6 @@ jobs:
       with:
         context: .
         push: true
-        tags: bluebrain/scholarag:${{ github.ref_name }}
+        tags: |
+          bluebrain/scholarag:${{ github.ref_name }}
+          bluebrain/scholarag:latest
