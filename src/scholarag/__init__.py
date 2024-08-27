@@ -1,3 +1,3 @@
-"""Scientific literature RAG."""
+"""Scholarag: A pipeline for RAG on scientific articles."""
 
-__version__ = "v0.0.3"
+__version__ = "0.19.0"

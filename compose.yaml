@@ -1,0 +1,84 @@
+services:
+  grobid:
+    image: "lfoppiano/grobid:0.7.3"
+    ports:
+      - "8070:8070"
+      - "8071:8071"
+    deploy:
+      resources:
+        limits:
+          cpus: 4000m
+          memory: 8gb
+        reservations:
+          cpus: 1000m
+          memory: 4gb
+    healthcheck:
+      test: apt-get update && apt-get install -y curl && curl -f localhost:8071/healthcheck >/dev/null || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 60s
+  redis:
+    image: "redis:7.2.3"
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli","ping" ]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 10s
+  etl:
+    image: "ETL IMAGE"
+    ports:
+      - "9090:8080"
+    environment:
+      - SCHOLARETL__GROBID__URL=http://host.docker.internal:8070
+    depends_on:
+      grobid:
+        condition: service_healthy
+    healthcheck:
+      test: curl -f localhost:8080/healthz >/dev/null || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 60s
+  opensearch:
+    image: "opensearchproject/opensearch:2.5.0"
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 10s
+      retries: 5
+      start_period: 5s
+      timeout: 10s
+  app:
+    build: .
+    ports:
+      - "1234:8080"
+    env_file: .env
+    environment:
+      - SCHOLARAG__DB__DB_TYPE=opensearch
+      - SCHOLARAG__DB__HOST=opensearch
+      - SCHOLARAG__DB__PORT=9200
+      - SCHOLARAG__REDIS__HOST=redis
+      - SCHOLARAG__REDIS__PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      etl:
+        condition: service_healthy
+      opensearch:
+        condition: service_healthy
+volumes:
+  opensearch-data1:

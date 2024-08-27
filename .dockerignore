@@ -1,0 +1,15 @@
+# Ignore all but src/
+*
+!src/scholarag/*
+!pyproject.toml
+
+# Ignore the __pycache__ that are in the whitelisted folders.
+__pycache__
+*/__pycache__/
+*/*/__pycache__/
+*/*/*/__pycache__/
+
+# Ignore files in app
+src/scholarag/app/.coverage
+src/scholarag/app/BBP_CA_ROOT_CERTIFICATE.crt
+src/scholarag/app/README.md

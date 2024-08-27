@@ -10,7 +10,51 @@ description = "Pipelines for RAG on scientific papers"
 readme = "README.md"
 requires-python = ">=3.10"
 dynamic = ["version"]
-dependencies = []
+dependencies = [
+    "aiobotocore",
+    "asgi-correlation-id",
+    "boto3",
+    "cohere",
+    "elasticsearch >= 8.5",
+    "elasticsearch-dsl",
+    "fastapi",
+    "fastapi-pagination",
+    "httpx",
+    "python-dotenv",
+    "openai",
+    "openpyxl",
+    "opensearch-py >= 2.5.0",
+    "pandas",
+    "pydantic",
+    "pydantic-settings",
+    "redis",
+    "sentry-sdk[fastapi]",
+    "types-redis",
+    "uvicorn",
+]
+
+[project.optional-dependencies]
+dev = [
+    "bandit[toml]",
+    "moto[server]",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest_asyncio",
+    "pytest_httpx",
+    "ruff",
+    "types-requests",
+    ]
+doc = ["mkdocs", "mkdocs-material", "mkdocstrings[python]"]
+
+[project.scripts]
+create-impact-factors-index = "scholarag.scripts.create_impact_factor_index:main"
+manage-index = "scholarag.scripts.manage_index:main"
+parse-and-upload = "scholarag.scripts.parse_and_upload:main"
+pu-consumer = "scholarag.scripts.pu_consumer:main"
+pu-producer = "scholarag.scripts.pu_producer:main"
+pmc-parse-and-upload = "scholarag.scripts.pmc_parse_and_upload:main"
+scholarag-api = "scholarag.scripts.scholarag_api:main"
 
 [tool.setuptools.dynamic]
 version = {attr = "scholarag.__version__"}
@@ -18,3 +62,55 @@ version = {attr = "scholarag.__version__"}
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = false
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+
+[tool.mypy]
+mypy_path = "src"
+python_version = "3.10"
+ignore_missing_imports = true
+no_implicit_optional = true
+check_untyped_defs = true
+strict_equality = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+plugins = [
+  "pydantic.mypy"
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+minversion = "6.0"
+testpaths = [
+    "tests",
+]
+filterwarnings = [
+    "error",
+    "ignore:Exception ignored in:pytest.PytestUnraisableExceptionWarning",
+    "ignore:sentry_sdk.configure_scope is deprecated and will be removed in the next major version:DeprecationWarning",
+    "ignore:Support for class-based `config` is deprecated, use ConfigDict instead.:pydantic.warnings.PydanticDeprecatedSince20",
+    "ignore:Valid config keys have changed in V2:UserWarning",
+    "ignore:`json_encoders` is deprecated:pydantic.warnings.PydanticDeprecatedSince20"
+]
+markers = [
+    "slow: marks tests as slow",
+]
+addopts = "--cov=src/ --cov=tests/ -v --cov-report=term-missing --durations=20 --no-cov-on-fail"

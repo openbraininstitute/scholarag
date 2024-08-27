@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10
 
 ENV PYTHONUNBUFFERED=1
 
@@ -13,4 +13,4 @@ RUN rm -rf /code
 WORKDIR /
 
 EXPOSE 8080
-CMD python -c "from scholarag import __version__; print(__version__)"
+CMD scholarag-api --host 0.0.0.0 --port 8080
