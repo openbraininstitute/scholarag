@@ -1,0 +1,1540 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../examples/">
+      
+      
+        <link rel="next" href="../setup/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.33">
+    
+    
+      
+        <title>Endpoints - Scholarag</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.3cba04c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#endpoints" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Scholarag" class="md-header__button md-logo" aria-label="Scholarag" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Scholarag
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Endpoints
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../concepts/" class="md-tabs__link">
+        
+  
+    
+  
+  Basic concepts
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../examples/" class="md-tabs__link">
+        
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+    
+  
+  Endpoints
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../setup/" class="md-tabs__link">
+        
+  
+    
+  
+  Application Setup
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../deployment/" class="md-tabs__link">
+        
+  
+    
+  
+  Application Deployment
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../scripts/" class="md-tabs__link">
+        
+  
+    
+  
+  Scripts
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../reference/" class="md-tabs__link">
+        
+  
+    
+  
+  Reference
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Scholarag" class="md-nav__button md-logo" aria-label="Scholarag" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Scholarag
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Endpoints
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Endpoints
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#question-answering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Question Answering
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Question Answering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#qa-service-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      QA Service Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calling-the-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calling the endpoint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Response Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-format-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Return format properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata properties
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#separators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Separators
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#article-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      Article count
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Article count">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calling-the-endpoint_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calling the endpoint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#article-listing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Article listing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Article listing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calling-the-endpoint_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calling the endpoint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#journal-suggestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Journal suggestion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#author-suggestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Author suggestion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      topics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regions" class="md-nav__link">
+    <span class="md-ellipsis">
+      regions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#article_types" class="md-nav__link">
+    <span class="md-ellipsis">
+      article_types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authors" class="md-nav__link">
+    <span class="md-ellipsis">
+      authors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#journals" class="md-nav__link">
+    <span class="md-ellipsis">
+      journals
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date_from" class="md-nav__link">
+    <span class="md-ellipsis">
+      date_from
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date_to" class="md-nav__link">
+    <span class="md-ellipsis">
+      date_to
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Application Deployment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scripts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scripts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#question-answering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Question Answering
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Question Answering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#qa-service-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      QA Service Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calling-the-endpoint" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calling the endpoint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Format
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Response Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-format-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Return format properties
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata properties
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#separators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Separators
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#retrieval" class="md-nav__link">
+    <span class="md-ellipsis">
+      Retrieval
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#article-count" class="md-nav__link">
+    <span class="md-ellipsis">
+      Article count
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Article count">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calling-the-endpoint_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calling the endpoint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#article-listing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Article listing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Article listing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#calling-the-endpoint_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Calling the endpoint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#response-format_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Response Format
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#journal-suggestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Journal suggestion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#author-suggestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Author suggestion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filtering" class="md-nav__link">
+    <span class="md-ellipsis">
+      Filtering
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Filtering">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      topics
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regions" class="md-nav__link">
+    <span class="md-ellipsis">
+      regions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#article_types" class="md-nav__link">
+    <span class="md-ellipsis">
+      article_types
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#authors" class="md-nav__link">
+    <span class="md-ellipsis">
+      authors
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#journals" class="md-nav__link">
+    <span class="md-ellipsis">
+      journals
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date_from" class="md-nav__link">
+    <span class="md-ellipsis">
+      date_from
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#date_to" class="md-nav__link">
+    <span class="md-ellipsis">
+      date_to
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="endpoints">Endpoints</h1>
+<h2 id="question-answering">Question Answering</h2>
+<h3 id="qa-service-overview">QA Service Overview</h3>
+<p>The QA service performs the following steps to generate answers:</p>
+<ol>
+<li>
+<p><strong>Retrieval</strong>: The service retrieves relevant documents and contexts from the database using Elasticsearch (ES) or
+   OpenSearch (OS) with BM25. This step provides the initial set of information for generating answers.</p>
+</li>
+<li>
+<p><strong>Reranker (Optional)</strong>:The reranker takes a large number of retrieved paragraphs and employs a machine learning
+   model to re-sort the paragraphs based on semantic similarity to the user's question embedding. It returns the '
+   reranker_k' most similar paragraphs, refining the search results.</p>
+</li>
+<li><strong>Answer Generation</strong>: The QA service generates answers using the retrieved documents and the user's question. It
+   uses a LLM generative model to compose responses based on the retrieved contexts.</li>
+</ol>
+<pre class="mermaid"><code>sequenceDiagram
+  autonumber
+  SDK-&gt;&gt;DocumentStore: Retrieve semantically similar contexts
+  SDK-&gt;&gt;Reranker: Rerank contexts
+  SDK-&gt;&gt;DocumentStore: Retrieve document metadata
+  SDK-&gt;&gt;OpenAI: Ask question from LLM</code></pre>
+<h3 id="calling-the-endpoint">Calling the endpoint</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">cURL</label><label for="__tabbed_1_2">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>curl<span class="w"> </span>--location<span class="w"> </span><span class="s1">&#39;https://ml.bbs.master.kcp.bbp.epfl.ch/qa/generative&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>--header<span class="w"> </span><span class="s1">&#39;Content-Type: application/json&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>--data<span class="w"> </span><span class="s1">&#39;{</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="s1">    &quot;query&quot;: &quot;What is the number of cells in the human brain?&quot;,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="s1">    &quot;retriever_k&quot;: 5,</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s1">    &quot;reranker_k&quot;: 4,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="s1">    &quot;use_reranker&quot;: true</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s1">}&#39;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-Python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span> <span class="nn">requests</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">import</span> <span class="nn">json</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ml.bbs.master.kcp.bbp.epfl.ch/qa/generative&quot;</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="n">payload</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;What is the number of cells in the human brain?&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="s2">&quot;retriever_k&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="s2">&quot;reranker_k&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="s2">&quot;use_reranker&quot;</span><span class="p">:</span> <span class="kc">True</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="p">})</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>  <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/json&#39;</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="p">}</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;POST&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>query</code></td>
+<td>The question we want to ask.</td>
+</tr>
+<tr>
+<td><code>retriever_k</code></td>
+<td>The number of contexts to retrieve.</td>
+</tr>
+<tr>
+<td><code>reranker_k</code></td>
+<td>If <strong>use_reranker</strong> is true, we only retrieve the <strong>reranker_k</strong> best contexts.</td>
+</tr>
+<tr>
+<td><code>use_reranker</code></td>
+<td>If set to true, we use a ML model to re-sort the retrieved contexts according to semantic similarity to the query.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="response-format">Response Format</h3>
+<p>The response format of the QA endpoint includes a final answer along with metadata about relevant sources. This
+structured format ensures that users receive comprehensive answers.</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">&quot;answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The number of cells in the human brain is approximately 86 billion.&quot;</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">&quot;raw_answer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The number of cells in the human brain is approximately 86 billion.\n&lt;bbs_sources&gt;: 0, 1&quot;</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">&quot;metadata&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">      </span><span class="nt">&quot;article_title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Development and Evolution of the Human Neocortex&quot;</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">      </span><span class="nt">&quot;article_authors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">        </span><span class="s2">&quot;Jan H. Lui&quot;</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">        </span><span class="s2">&quot;David V. Hansen&quot;</span><span class="p">,</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">        </span><span class="s2">&quot;Arnold R. Kriegstein&quot;</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="p">],</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="nt">&quot;article_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;e80c88ab244eb08290e6fded98d5b8e2&quot;</span><span class="p">,</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">      </span><span class="nt">&quot;article_doi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.1016/j.cell.2011.06.030&quot;</span><span class="p">,</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">      </span><span class="nt">&quot;pubmed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;21729779&quot;</span><span class="p">,</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">      </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2017-03-01&quot;</span><span class="p">,</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">      </span><span class="nt">&quot;article_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;research-article&quot;</span><span class="p">,</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="nt">&quot;journal_issn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0092-8674&quot;</span><span class="p">,</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">      </span><span class="nt">&quot;journal_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Cell (Cambridge)&quot;</span><span class="p">,</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">      </span><span class="nt">&quot;cited_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1097</span><span class="p">,</span>
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="w">      </span><span class="nt">&quot;impact_factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">1.0</span><span class="p">,</span>
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="w">      </span><span class="nt">&quot;abstract&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The size and surface area of the mammalian brain are thought to be critical determinants of intellectual ability. Recent studies show that development of the gyrated human neocortex involves a lineage of neural stem and transit-amplifying cells that forms the outer subventricular zone (OSVZ), a proliferative region outside the ventricular epithelium. We discuss how proliferation of cells within the OSVZ expands the neocortex by increasing neuron number and modifying the trajectory of migrating neurons. Relating these features to other mammalian species and known molecular regulators of the mouse neocortex suggests how this developmental process could have emerged in evolution.&quot;</span><span class="p">,</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">      </span><span class="nt">&quot;paragraph&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Studies of the human brain and comparisons of developmental proliferative zones between species may ultimately help to explain what makes the human brain unique. It is commonly thought that the exceptional cognitive abilities of humans are related to the large size of the neocortex. Recent evidence has shown that primates have greater neuronal density (neuron number/brain mass) compared to rodents of equal brain mass, a feature that is likely related to the topological differences in foldedness that could have been influenced by OSVZ proliferation. However, though the human brain is large by weight (1.5 kg) and neuron number (86 billion) (Azevedo et al., 2009; reviewed by Herculano-Houzel, 2009), this ratio does not deviate from what would be expected from a primate brain of similar mass, implying that, in terms of brain size and density, the human brain conforms to a scaled-up primate brain. Furthermore, developmental similarities between the human and ferret show that increased OSVZ proliferation and oRG cells are not primate-specific features (Figure 7A). The percentage of progenitor cells in the SVZ/OSVZ of rodents, carnivores, ungulates, and primates shows a remarkable positive correlation with the degree of neocortical gyrification (Reillo et al., 2010). Thus, development of OSVZ proliferation appears to be an important general feature for increasing neuronal number and neocortical surface area throughout Eutheria.&quot;</span><span class="p">,</span>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a><span class="w">      </span><span class="nt">&quot;paragraph_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;9bb53ebb0f82d2a848c7ef5c1a434293&quot;</span><span class="p">,</span>
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="w">      </span><span class="nt">&quot;context_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">      </span><span class="nt">&quot;reranking_score&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">      </span><span class="nt">&quot;section&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The Human Neocortex: A Scaled-up Primate Brain&quot;</span>
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="p">}</span>
+</span></code></pre></div>
+<h4 id="return-format-properties">Return format properties</h4>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>answer</code></td>
+<td>The actual answer to the question.</td>
+</tr>
+<tr>
+<td><code>raw_answer</code></td>
+<td>This is the raw text returned by the Large Language Model. If the pipeline successfully found an answer this will contain  it, as well as a list of sources.</td>
+</tr>
+<tr>
+<td><code>metadata</code></td>
+<td>A list where the elements are objects containing key-value pairs. Each objects has metadata about one of the source paragraphs that was retreived.<br/></td>
+</tr>
+</tbody>
+</table>
+<h4 id="metadata-properties">Metadata properties</h4>
+<table>
+<thead>
+<tr>
+<th>Metadata parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>article_title</code></td>
+<td>Title of this article.</td>
+</tr>
+<tr>
+<td><code>article_authors</code></td>
+<td>A list of authors.</td>
+</tr>
+<tr>
+<td><code>article_id</code></td>
+<td>Unique identifier of this article in our database.</td>
+</tr>
+<tr>
+<td><code>article_doi</code></td>
+<td>Digital Object Identifier of this article.</td>
+</tr>
+<tr>
+<td><code>pubmed_id</code></td>
+<td>A unique identifier used in the PubMed database.</td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>Publication date of this article.</td>
+</tr>
+<tr>
+<td><code>article_type</code></td>
+<td>The type of scholarly article. Some valid types are: <strong>research, publication, review, thesis</strong></td>
+</tr>
+<tr>
+<td><code>journal_issn</code></td>
+<td>The <strong>International Standard Serial Number</strong> is a unique identifier for journals.</td>
+</tr>
+<tr>
+<td><code>journal_name</code></td>
+<td>The name of the journal where this article was published.</td>
+</tr>
+<tr>
+<td><code>cited_by</code></td>
+<td>The number of citations for this article.</td>
+</tr>
+<tr>
+<td><code>impact_factor</code></td>
+<td>The impact factor of the journal where this article was published.</td>
+</tr>
+<tr>
+<td><code>abstract</code></td>
+<td>The text of the abstract for this article.</td>
+</tr>
+<tr>
+<td><code>paragraph</code></td>
+<td>The actual text of this paragraph.</td>
+</tr>
+<tr>
+<td><code>paragraph_id</code></td>
+<td>The unique identifier of this paragraph in our database.</td>
+</tr>
+<tr>
+<td><code>context_id</code></td>
+<td>The unique index of this paragraph that is referenced in the returned answers.</td>
+</tr>
+<tr>
+<td><code>reranking_score</code></td>
+<td>Score returned by the reranker used to sort contexts by relevance.</td>
+</tr>
+<tr>
+<td><code>section</code></td>
+<td>Name of the section inside the publication where this paragraphs is from.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="separators">Separators</h3>
+<p>The QA endpoint uses the following separators within its prompt template:</p>
+<ul>
+<li>
+<p><strong>Sources Separator (<code>SOURCES_SEPARATOR</code>)</strong>: This placeholder is used to indicate where references to sources should
+  be inserted in the final answer. It ensures that users can access the sources related to the provided answer.</p>
+</li>
+<li>
+<p><strong>Error Separator (<code>ERROR_SEPARATOR</code>)</strong>: The error separator is used to signify that an answer is not available. When
+  an answer is not found, the response starts with the error separator, providing transparency about the absence of a
+  valid response.</p>
+</li>
+</ul>
+<h2 id="retrieval">Retrieval</h2>
+<p>One can also retrieve data from the database without the call to a Large Language Model. </p>
+<h2 id="article-count">Article count</h2>
+<p>The article count endpoint is a convenient endpoint that returns the number of articles in our DB that match certain filters that the user can specify. The filters are described in the <a href="./#filtering">Filtering section</a>.</p>
+<h3 id="calling-the-endpoint_1">Calling the endpoint</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">cURL</label><label for="__tabbed_2_2">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>--location<span class="w"> </span><span class="s1">&#39;https://ml.bbs.master.kcp.bbp.epfl.ch/retrieval/article_count?topics=pyramidal%20cells&#39;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-Python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span> <span class="nn">requests</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">import</span> <span class="nn">json</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ml.bbs.master.kcp.bbp.epfl.ch/retrieval/article_count?topics=pyramidal</span><span class="si">%20c</span><span class="s2">ells&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="response-format_1">Response Format</h3>
+<p>The response format of the <code>article_count</code> endpoint is a very simple JSON.
+<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span><span class="nt">&quot;article_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">29203</span><span class="p">}</span>
+</span></code></pre></div></p>
+<h2 id="article-listing">Article listing</h2>
+<p>The <code>article_listing</code> endpoint is complementary to the <code>article_count</code> one. The articles counted in <code>article_count</code> can be displayed using this endpoint, granted that the same <a href="./#filtering">filters</a> are applied.</p>
+<h3 id="calling-the-endpoint_2">Calling the endpoint</h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">cURL</label><label for="__tabbed_3_2">Python</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>curl<span class="w"> </span>--location<span class="w"> </span><span class="s1">&#39;https://ml.bbs.master.kcp.bbp.epfl.ch/retrieval/article_listing?topics=pyramidal%20cells&#39;</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-Python highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span> <span class="nn">requests</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">import</span> <span class="nn">json</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://ml.bbs.master.kcp.bbp.epfl.ch/retrieval/article_listing?topics=pyramidal</span><span class="si">%20c</span><span class="s2">ells&quot;</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filters</code></td>
+<td>Typical retrieval <a href="./#filtering">filters</a>.</td>
+</tr>
+<tr>
+<td><code>number_results</code></td>
+<td>Maximum number of unique articles to retrieve from the DB per request.</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>Number of unique articles per page.</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>Page number to retrieve</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The pagination is not a real pagination. For each request, our DB returns <code>number_results</code> unique articles, that we split in <code>ceil(number_results / size)</code> pages. Specifying a page number or a size such that <code>page * size &gt; number_results</code> will result in an empty or partially empty output.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Considering the way we paginate results, each new page retrieved fetches <code>number_results</code> articles from our DB and fetches the relevant metadata, leading to a potential heavy load on the DB. For that reason, and at least while we are hosting our DB on kubernetes, <code>number_results</code> cannot be too high to avoid crashes.</p>
+</div>
+<h3 id="response-format_2">Response Format</h3>
+<p>The response format of the <code>article_count</code> endpoint is shown as a JSON containing the relevant metadata about the selected articles.</p>
+<p><div class="language-json highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="p">{</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">  </span><span class="nt">&quot;items&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="p">{</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">      </span><span class="nt">&quot;article_title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Suppression of Neuronal Firing Following Antidromic High-Frequency Stimulations on the Neuronal Axons in Rat Hippocampal CA1 Region&quot;</span><span class="p">,</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">      </span><span class="nt">&quot;article_authors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">        </span><span class="s2">&quot;Yue Yuan&quot;</span><span class="p">,</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">        </span><span class="s2">&quot;Zhouyan Feng&quot;</span><span class="p">,</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">        </span><span class="s2">&quot;Gangsheng Yang&quot;</span><span class="p">,</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">        </span><span class="s2">&quot;Xiangyu Ye&quot;</span><span class="p">,</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">        </span><span class="s2">&quot;Zhaoxiang Wang&quot;</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">      </span><span class="p">],</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="w">      </span><span class="nt">&quot;article_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;6d0b455cbdbf594fcf1c22228f9671df&quot;</span><span class="p">,</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="w">      </span><span class="nt">&quot;article_doi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;10.3389/fnins.2022.881426&quot;</span><span class="p">,</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="w">      </span><span class="nt">&quot;pubmed_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="w">      </span><span class="nt">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2022-06-10&quot;</span><span class="p">,</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="w">      </span><span class="nt">&quot;article_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;research-article&quot;</span><span class="p">,</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="w">      </span><span class="nt">&quot;journal_issn&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;1662-4548&quot;</span><span class="p">,</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="w">      </span><span class="nt">&quot;journal_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Frontiers in neuroscience (Print)&quot;</span><span class="p">,</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a><span class="w">      </span><span class="nt">&quot;cited_by&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="w">      </span><span class="nt">&quot;impact_factor&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="w">      </span><span class="nt">&quot;abstract&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;High-frequency stimulation (HFS) of electrical pulses has been used to treat certain neurological diseases in brain with commonly utilized effects within stimulation periods. Post-stimulation effects after the end of HFS may also have functions but are lack of attention. To investigate the post-stimulation effects of HFS, we performed experiments in the rat hippocampal CA1 region in vivo. Sequences of 1-min antidromic-HFS (A-HFS) were applied at the alveus fibers. To evaluate the excitability of the neurons, separated orthodromic-tests (O-test) of paired pulses were applied at the Schaffer collaterals in the period of baseline, during late period of A-HFS, and following A-HFS. The evoked potentials of A-HFS pulses and O-test pulses were recorded at the stratum pyramidale and the stratum radiatum of CA1 region by an electrode array. The results showed that the antidromic population spikes (APS) evoked by the A-HFS pulses persisted through the entire 1-min period of 100 Hz A-HFS, though the APS amplitudes decreased significantly from the initial value of 9.9 ± 3.3 mV to the end value of 1.6 ± 0.60 mV. However, following the cessation of A-HFS, a silent period without neuronal firing appeared before the firing gradually recovered to the baseline level. The mean lengths of both silent period and recovery period of pyramidal cells (21.9 ± 22.9 and 172.8 ± 91.6 s) were significantly longer than those of interneurons (11.2 ± 8.9 and 45.6 ± 35.9 s). Furthermore, the orthodromic population spikes (OPS) and the field excitatory postsynaptic potentials (fEPSP) evoked by O-tests at ∼15 s following A-HFS decreased significantly, indicating the excitability of pyramidal cells decreased. In addition, when the pulse frequency of A-HFS was increased to 200, 400, and 800 Hz, the suppression of neuronal activity following A-HFS decreased rather than increased. These results indicated that the neurons with axons directly under HFS can generate a post-stimulation suppression of their excitability that may be due to an antidromic invasion of axonal A-HFS to somata and dendrites. The finding provides new clues to utilize post-stimulation effects generated in the intervals to design intermittent stimulations, such as closed-loop or adaptive stimulations.&quot;</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">    </span><span class="p">}</span>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">  </span><span class="p">],</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="w">  </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="w">  </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="w">  </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="w">  </span><span class="nt">&quot;pages&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span>
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="p">}</span>
+</span></code></pre></div>
+The meaning of each fields can be found <a href="./#metadata-properties">here</a></p>
+<h2 id="journal-suggestion">Journal suggestion</h2>
+<p>TODO</p>
+<h2 id="author-suggestion">Author suggestion</h2>
+<p>TODO</p>
+<h2 id="filtering">Filtering</h2>
+<p>Many endpoints related to document retrieval from the database share the same set of query parameters that can help further filtering the result of the retrieval. These query parameters are optional and should usually be proposed to the end user to filter his search. This section describes them in details.</p>
+<h3 id="topics">topics</h3>
+<p>Indicates which topic(s) the article should be about. You can specify multiple topics using the format <code>topics=xxx&amp;topics=yyy</code>. If multiple topics are specified, they are <strong>AND</strong> matched. If a topic consists of multiple words, each word is <strong>AND</strong> matched. For instance, specifying <code>topics=[neuron morphology, electrophysiololgy]</code> results in the query :</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;((neuron AND morphology) AND electrophysiololgy)&quot;</span><span class="p">}</span>
+</span></code></pre></div>
+<p>and only paragraphs containing the words "neuron" <strong>AND</strong> "morpholgy" <strong>AND</strong> "electrophysiology" will be returned.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>"neuron morphology" doesn't necessarily have to be present as a whole, each word can be scattered around. For endpoints dealing with articles instead of paragraphs, an article will be returned if at least one of its paragraphs matches the filter.</p>
+</div>
+<h3 id="regions">regions</h3>
+<p>Indicates which region(s) (of the brain) the article should be about. You can specify multiple regions using the format <code>regions=xxx&amp;regions=yyy</code>. If multiple regions are specified, they are <strong>OR</strong> matched. If a region consists of multiple words, each word is <strong>AND</strong> matched. For instance, specifying <code>regions=[frontal lobe, isocortex]</code> results in the query:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;((frontal AND lobe) OR isocortex)&quot;</span><span class="p">}</span>
+</span></code></pre></div>
+<p>and only paragraphs containing the words "frontal + lobe" <strong>OR</strong> "isocortex" will be returned.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>"frontal lobe" doesn't necessarily have to be present as a whole, each word can be scattered around. For endpoints dealing with articles instead of paragraphs, an article will be returned if at least one of its paragraphs matches the filter.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If topics and regions are used together, they are <strong>AND</strong> matched. for instance, specifying <code>topics=[neuron morphology, electrophysiololgy]</code> and <code>regions=[frontal lobe, isocortex]</code> results in the query
+<div class="language-python highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="p">{</span><span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="s2">&quot;((neuron AND morphology) AND electrophysiololgy) AND ((frontal AND lobe) OR isocortex)&quot;</span><span class="p">}</span>
+</span></code></pre></div></p>
+</div>
+<h3 id="article_types">article_types</h3>
+<p>Specifies the type(s) of article that one is looking for. Article types and their occurence are listed by the <code>/suggestions/article_types</code> endpoints, which can be used to suggests results for this filter. Examples of article types could be <code>research-article</code> or <code>review-article</code> for instance. Multiple article types can be specified using the syntax <code>article_types=xxx&amp;article_types=yyy</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If multiple article types are specified, they are <strong>OR</strong> matched (i.e. the article should be of type <code>xxx</code> <strong>OR</strong> <code>yyy</code> <strong>OR</strong>...).</p>
+</div>
+<h3 id="authors">authors</h3>
+<p>Specifies which author(s) should have written the article. The endpoint <code>/suggestions/author</code> is made available to suggest authors based on partial name matching to help the user fill this filter. Multiple authors can be specified using the syntax <code>authors=xxx&amp;authors=yyy</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If multiple authors are specified, they are <strong>OR</strong> matched (i.e. the article should have been written by <code>xxx</code> <strong>OR</strong> <code>yyy</code> <strong>OR</strong>...).</p>
+</div>
+<h3 id="journals">journals</h3>
+<p>Specifies in which journal(s) the article should be published. This query parameter expects the ISSN of the journal in the format <code>XXXX-XXXX</code>, not its name. The endpoint <code>/suggestions/journal</code> is made available to suggest journals based on name partial matching to help the user fill this filter. Multiple journals can be specified using the syntax <code>journals=xxx&amp;journals=yyy</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If multiple journals are specified, they are <strong>OR</strong> matched (i.e. the article should have been published in <code>XXXX-XXXX</code> <strong>OR</strong> <code>YYYY-YYYY</code> <strong>OR</strong>...).</p>
+</div>
+<h3 id="date_from">date_from</h3>
+<p>Lower bound on the publication date of the article. Format: <code>YYYY-MM-DD</code></p>
+<h3 id="date_to">date_to</h3>
+<p>Upper bound on the publication date of the article. Format: <code>YYYY-MM-DD</code></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+      <div class="md-progress" data-md-component="progress" role="progressbar"></div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.instant.progress", "navigation.sections", "navigation.path", "navigation.top", "toc.follow", "search.suggest", "search.highlight", "pymdownx.superfences", {"pymdownx.tabbed": {"alternate_style": true}}], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.af256bd8.min.js"></script>
+      
+    
+  </body>
+</html>
