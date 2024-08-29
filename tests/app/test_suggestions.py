@@ -1,4 +1,5 @@
-"""Tests for the suggestions endpoints.""" ""
+"""Tests for the suggestions endpoints."""
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 from scholarag.app.config import Settings

@@ -54,7 +54,6 @@ async def test_key_builder():
             "port": 1515,
         }
     )
-    user = "test"
     app.dependency_overrides[get_settings] = lambda: test_settings
     request = Request(
         scope={
@@ -64,7 +63,7 @@ async def test_key_builder():
         }
     )
     await set_body(request, b"Amazing body")
-    key_1 = await custom_key_builder(request, test_settings, version="0.8.0", user=user)
+    key_1 = await custom_key_builder(request, test_settings, version="0.8.0")
 
     request = Request(
         scope={
@@ -75,7 +74,7 @@ async def test_key_builder():
     )
 
     await set_body(request, b"An even better body")
-    key_2 = await custom_key_builder(request, test_settings, version="0.8.0", user=user)
+    key_2 = await custom_key_builder(request, test_settings, version="0.8.0")
 
     test_settings = Settings(
         db={
@@ -88,7 +87,7 @@ async def test_key_builder():
     )
     app.dependency_overrides[get_settings] = lambda: test_settings
 
-    key_3 = await custom_key_builder(request, test_settings, version="0.8.0", user=user)
+    key_3 = await custom_key_builder(request, test_settings, version="0.8.0")
     assert key_1 != key_2
     assert key_2 != key_3
     assert key_1 != key_3
