@@ -51,12 +51,12 @@ class CohereRerankingService(BaseModel):
             List of dictionaries containing in score order the text and the associated score.
         """
         response = self.client.rerank(
-            model="rerank-english-v2.0",
+            model="rerank-english-v3.0",
             query=query,
             documents=contexts,
             return_documents=True,
             top_n=len(contexts),
-            max_chunks_per_doc=10_000 // len(contexts),
+            max_chunks_per_doc=1000 // len(contexts),
         )
         reranked_contexts = [
             {
@@ -88,12 +88,12 @@ class CohereRerankingService(BaseModel):
             List of dictionaries containing in score order the text and the associated score.
         """
         response = await self.async_client.rerank(
-            model="rerank-english-v2.0",
+            model="rerank-english-v3.0",
             query=query,
             documents=contexts,
             return_documents=True,
             top_n=len(contexts),
-            max_chunks_per_doc=10_000 // len(contexts),
+            max_chunks_per_doc=1000 // len(contexts),
         )
 
         reranked_contexts = [

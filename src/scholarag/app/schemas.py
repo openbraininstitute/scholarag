@@ -50,7 +50,7 @@ class PassthroughRequest(BaseModel):
 class RetrievalRequest(PassthroughRequest, extra="forbid"):
     """Request for the raw retrieval endpoint."""
 
-    retriever_k: int = Field(700, ge=1, le=2000)
+    retriever_k: int = Field(500, ge=1, le=1000)
     use_reranker: bool = True
     reranker_k: int = Field(8, ge=1, le=100)
 

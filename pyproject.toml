@@ -17,7 +17,7 @@ dependencies = [
     "cohere",
     "elasticsearch >= 8.5",
     "elasticsearch-dsl",
-    "fastapi",
+    "fastapi <= 0.112.0",
     "fastapi-pagination",
     "httpx",
     "python-dotenv",
