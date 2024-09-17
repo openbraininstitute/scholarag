@@ -1,7 +1,6 @@
 """Utilities to stream openai response."""
 
 import json
-from collections import deque
 from typing import Any, AsyncIterable
 
 from httpx import AsyncClient
@@ -9,10 +8,10 @@ from openai import AsyncOpenAI, BadRequestError
 
 from scholarag.app.config import Settings
 from scholarag.app.dependencies import ErrorCode
+from scholarag.app.schemas import GenerativeQAResponse
 from scholarag.document_stores import AsyncBaseSearch
 from scholarag.generative_question_answering import (
-    ERROR_SEPARATOR,
-    SOURCES_SEPARATOR,
+    GenerativeQAOutput,
     GenerativeQAWithSources,
 )
 from scholarag.retrieve_metadata import MetaDataRetriever
@@ -84,30 +83,50 @@ async def stream_response(
     openai_client = AsyncOpenAI(api_key=api_key)
     qas.client = openai_client
 
-    token_queue: deque[str] = deque(
-        maxlen=4
-    )  # Needs to be EXACTLY the number of tokens of the separator. See https://platform.openai.com/tokenizer
-    # Some black magic.
-    raw_string = ""
     try:
-        async for chunk in qas.astream(
+        generator = qas.astream(
             query=query,
             contexts=contexts_text,
-            prompt_template=settings.generative.prompt_template.get_secret_value(),
-        ):
-            raw_string += chunk
-            if len(token_queue) == token_queue.maxlen:
-                queued_text = "".join(list(token_queue))
-                if (
-                    f"{SOURCES_SEPARATOR}:" in queued_text
-                    or ERROR_SEPARATOR in queued_text
-                ):  # Might change if we change the separator. # This condition is subject to change based on the separator we use.
-                    continue
-                yield token_queue.popleft()
-            token_queue.append(chunk)
-    except RuntimeError as e:
-        # Since finish reason is raised, it has to be recovered as such.
-        finish_reason = e.args[0]
+            system_prompt=settings.generative.system_prompt.get_secret_value(),
+        )
+
+        parsed: dict[str, str | bool | list[int]] | GenerativeQAOutput = {}
+        # While the model didn't say if it has answer or not, keep consuming
+        while parsed.get("has_answer") is None:  # type: ignore
+            _, parsed = await anext(generator)
+        # If the LLM doesn't know answer, no need to further iterate
+        if not parsed["has_answer"]:  # type: ignore
+            yield "<bbs_json_error>"
+            yield json.dumps(
+                {
+                    "Error": {
+                        "status_code": 404,
+                        "code": ErrorCode.NO_ANSWER_FOUND.value,
+                        "detail": (
+                            "The LLM did not manage to answer the question based on the provided contexts."
+                        ),
+                    }
+                }
+            )
+            parsed_output = GenerativeQAOutput(
+                has_answer=False, answer="", paragraphs=[]
+            )
+        # Else, we stream the tokens.
+        # First ensure not streaming '"answer":'
+        else:
+            accumulated_text = ""
+            while '"answer":' not in accumulated_text:
+                chunk, _ = await anext(generator)
+                accumulated_text += chunk
+            # Then we stream the answer
+            async for chunk, parsed in generator:
+                # While the answer has not finished streaming we yield the tokens.
+                if parsed.get("answer") is None:  # type: ignore
+                    yield chunk
+                # Stop streaming as soon as the answer is complete
+                # (i.e. don't stream the paragraph ids)
+                else:
+                    break
 
     # Errors cannot be raised due to the streaming nature of the endpoint. They're yielded as a dict instead,
     # leaving the charge to the user to catch them. The stream is simply interrupted in case of error.
@@ -124,9 +143,40 @@ async def stream_response(
                 }
             }
         )
-    if not interrupted:
-        # Post process the output to get citations.
-        answer = qas._process_raw_output(raw_output=raw_string)
+
+    try:
+        # Extract the final pydantic class (last item in generator)
+        parsed_output = await anext(
+            (
+                parsed
+                async for (_, parsed) in generator
+                if isinstance(parsed, GenerativeQAOutput)
+            )
+        )
+    except StopAsyncIteration:
+        # If it is not present, we had an issue.
+        # By default if there was an issue we nullify the potential partial answer.
+        # Feel free to suggest another approach.
+        parsed_output = GenerativeQAOutput(has_answer=False, answer="", paragraphs=[])
+        yield "<bbs_json_error>"
+        yield json.dumps(
+            {
+                "Error": {
+                    "status_code": 404,
+                    "code": ErrorCode.NO_ANSWER_FOUND.value,
+                    "detail": (
+                        "The LLM encountered an error when answering the question."
+                    ),
+                }
+            }
+        )
+    try:
+        # Finally we "raise" the finish_reason
+        await anext(generator)
+    except RuntimeError as err:
+        finish_reason: str = err.args[0]
+
+    if not interrupted and parsed_output.has_answer:
         # Ensure that the model finished yielding.
         if finish_reason == "length":
             # Adding a separator before raising the error.
@@ -142,22 +192,7 @@ async def stream_response(
                             " retriever_k value by 1 or 2 depending of whether you are"
                             " using the reranker or not."
                         ),
-                        "raw_answer": answer["raw_answer"],
-                    }
-                }
-            )
-        elif answer["paragraphs"] is None or len(answer["paragraphs"]) == 0:  # type: ignore
-            # Adding a separator before raising the error.
-            yield "<bbs_json_error>"
-            yield json.dumps(
-                {
-                    "Error": {
-                        "status_code": 404,
-                        "code": ErrorCode.NO_ANSWER_FOUND.value,
-                        "detail": (
-                            "The LLM did not provide any source to answer the question."
-                        ),
-                        "raw_answer": answer["raw_answer"],
+                        "raw_answer": parsed_output.answer,
                     }
                 }
             )
@@ -165,7 +200,7 @@ async def stream_response(
             # Adding a separator between the streamed answer and the processed response.
             yield "<bbs_json_data>"
             complete_answer = await retrieve_metadata(
-                answer=answer,
+                answer=parsed_output,
                 ds_client=ds_client,
                 index_journals=index_journals,
                 index_paragraphs=index_paragraphs,
@@ -175,11 +210,11 @@ async def stream_response(
                 indices=indices,
                 scores=scores,
             )
-            yield json.dumps(complete_answer)
+            yield complete_answer.model_dump_json()
 
 
 async def retrieve_metadata(
-    answer: dict[str, Any],
+    answer: GenerativeQAOutput,
     ds_client: AsyncBaseSearch,
     index_journals: str | None,
     index_paragraphs: str,
@@ -188,13 +223,13 @@ async def retrieve_metadata(
     contexts: list[dict[str, Any]],
     indices: tuple[int, ...],
     scores: tuple[float, ...] | None,
-) -> dict[str, Any]:
+) -> GenerativeQAResponse:
     """Retrieve the metadata and display them nicely.
 
     Parameters
     ----------
     answer
-        Answer generated by the model.
+        Parsed answer returned by the model.
     ds_client
         Document store client.
     index_journals
@@ -216,6 +251,7 @@ async def retrieve_metadata(
     -------
     Nicely formatted answer with metadata.
     """
+    contexts = [contexts[i] for i in answer.paragraphs]
     fetched_metadata = await metadata_retriever.retrieve_metadata(
         contexts, ds_client, index_journals, index_paragraphs, httpx_client
     )
@@ -225,11 +261,8 @@ async def retrieve_metadata(
     impact_factors = fetched_metadata["get_impact_factors"]
     abstracts = fetched_metadata["recreate_abstract"]
 
-    context_ids: list[int] = answer["paragraphs"]
     metadata = []
-    for context_id in context_ids:
-        context = contexts[context_id]
-
+    for context, context_id in zip(contexts, answer.paragraphs):
         metadata.append(
             {
                 "impact_factor": impact_factors[context.get("journal")],
@@ -251,7 +284,10 @@ async def retrieve_metadata(
                 "pubmed_id": context["pubmed_id"],
             }
         )
-        answer["metadata"] = metadata
 
-    del answer["paragraphs"]
-    return answer
+    output = {
+        "answer": answer.answer,
+        "paragraphs": answer.paragraphs,
+        "metadata": metadata,
+    }
+    return GenerativeQAResponse(**output)

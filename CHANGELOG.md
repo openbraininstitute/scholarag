@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- Use OpenAI response_format instead of separators in the prompt.
 - Switch to cohere reranker v3 and `retriever_k = 500`.
 
 ## [v0.0.5]

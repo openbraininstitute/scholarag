@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing_extensions import Self
 
-from scholarag.generative_question_answering import PROMPT_TEMPLATE
+from scholarag.generative_question_answering import MESSAGES
 
 
 class SettingsKeycloak(BaseModel):
@@ -84,7 +84,7 @@ class SettingsOpenAI(BaseModel):
     """OpenAI settings."""
 
     token: SecretStr | None = None
-    model: str = "gpt-3.5-turbo"
+    model: str = "gpt-4o-mini"
     temperature: float = 0
     max_tokens: int | None = None
 
@@ -95,7 +95,7 @@ class SettingsGenerative(BaseModel):
     """Generative QA settings."""
 
     openai: SettingsOpenAI = SettingsOpenAI()
-    prompt_template: SecretStr = SecretStr(PROMPT_TEMPLATE)
+    system_prompt: SecretStr = SecretStr(MESSAGES[0]["content"])
 
     model_config = ConfigDict(frozen=True)
 

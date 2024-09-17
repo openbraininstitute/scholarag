@@ -115,5 +115,5 @@ class GenerativeQAResponse(BaseModel):
     """Response for the generative QA endpoint."""
 
     answer: str | None
-    raw_answer: str
+    paragraphs: list[int]
     metadata: list[ParagraphMetadata]

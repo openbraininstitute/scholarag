@@ -293,7 +293,7 @@ async def generative_qa(
         **{
             "query": request.query,
             "contexts": contexts_text,
-            "prompt_template": settings.generative.prompt_template.get_secret_value(),
+            "system_prompt": settings.generative.system_prompt.get_secret_value(),
         },
     )
     try:
@@ -325,17 +325,17 @@ async def generative_qa(
                     " its answer. Please decrease the reranker_k or retriever_k value"
                     " by 1 or 2 depending of whether you are using the reranker or not."
                 ),
-                "raw_answer": answer["raw_answer"],
+                "answer": answer.answer,
             },
         )
 
-    if answer["paragraphs"] is None or len(answer["paragraphs"]) == 0:
+    if not answer.has_answer:
         raise HTTPException(
             status_code=500,
             detail={
                 "code": ErrorCode.NO_ANSWER_FOUND.value,
                 "detail": "The LLM did not provide any source to answer the question.",
-                "raw_answer": answer["raw_answer"],
+                "answer": answer.answer,
             },
         )
     else:
@@ -344,7 +344,7 @@ async def generative_qa(
         impact_factors = fetched_metadata["get_impact_factors"]
         abstracts = fetched_metadata["recreate_abstract"]
 
-        context_ids: list[int] = answer["paragraphs"]
+        context_ids: list[int] = answer.paragraphs
         logger.info("Adding article metadata to the answers")
         metadata = []
         for context_id in context_ids:
@@ -375,11 +375,13 @@ async def generative_qa(
                     }
                 )
             )
-        answer["metadata"] = metadata
-
-    del answer["paragraphs"]
+    output = {
+        "answer": answer.answer,
+        "paragraphs": answer.paragraphs,
+        "metadata": metadata,
+    }
     logger.info(f"Total time to generate a complete answer: {time.time() - start}")
-    return GenerativeQAResponse(**answer)
+    return GenerativeQAResponse(**output)
 
 
 @router.post(

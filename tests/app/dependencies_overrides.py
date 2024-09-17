@@ -19,7 +19,7 @@ from scholarag.app.dependencies import (
 )
 from scholarag.app.main import app
 from scholarag.document_stores import AsyncBaseSearch
-from scholarag.generative_question_answering import ERROR_SEPARATOR, SOURCES_SEPARATOR
+from scholarag.generative_question_answering import GenerativeQAOutput
 
 
 def override_rts(has_context=True):
@@ -105,34 +105,24 @@ def override_generative_qas(has_answer=True, complete_answer=True):
     FakeQAS.arun.__name__ = "arun"
     if has_answer:
         FakeQAS.arun.side_effect = lambda **params: (
-            {
-                "answer": "This is a perfect answer.",
-                "paragraphs": [0, 1, 2],
-                "raw_answer": (
-                    f"This is a perfect answer \n{SOURCES_SEPARATOR}: 0, 1, 2"
-                ),
-            },
+            GenerativeQAOutput(
+                has_answer=True,
+                answer="This is a perfect answer.",
+                paragraphs=[0, 1, 2],
+            ),
             "stop",
         )
     else:
         if complete_answer:
             FakeQAS.arun.side_effect = lambda **params: (
-                {
-                    "answer": None,
-                    "paragraphs": None,
-                    "raw_answer": (
-                        f"{ERROR_SEPARATOR}I don't know \n{SOURCES_SEPARATOR}:"
-                    ),
-                },
+                GenerativeQAOutput(
+                    has_answer=False, answer="I don't know.", paragraphs=[]
+                ),
                 "stop",
             )
         else:
             FakeQAS.arun.side_effect = lambda **params: (
-                {
-                    "answer": None,
-                    "paragraphs": None,
-                    "raw_answer": f"{ERROR_SEPARATOR}I don't",
-                },
+                GenerativeQAOutput(has_answer=False, answer="I don't", paragraphs=[]),
                 "length",
             )
     app.dependency_overrides[get_generative_qas] = lambda: FakeQAS

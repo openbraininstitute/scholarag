@@ -13,9 +13,7 @@ from scholarag.app.main import app
 from scholarag.app.routers.qa import GenerativeQAResponse, ParagraphMetadata
 from scholarag.document_stores import AsyncOpenSearch
 from scholarag.generative_question_answering import (
-    ERROR_SEPARATOR,
-    SOURCES_SEPARATOR,
-    GenerativeQAWithSources,
+    GenerativeQAOutput,
 )
 
 from app.dependencies_overrides import (
@@ -83,14 +81,11 @@ def test_generative_qa_reranker(app_client, reranker_k, mock_http_calls):
     _, list_document_ids = override_rts(has_context=True)
 
     fakeqas.arun.side_effect = lambda **params: (
-        {
-            "answer": "This is a perfect answer.",
-            "paragraphs": list(range(reranker_k)),
-            "raw_answer": (
-                f"This is a perfect answer /n{SOURCES_SEPARATOR}:"
-                f" {', '.join([str(i) for i in range(reranker_k)])}"
-            ),
-        },
+        GenerativeQAOutput(
+            has_answer=True,
+            answer="This is a perfect answer.",
+            paragraphs=list(range(reranker_k)),
+        ),
         None,
     )
 
@@ -162,13 +157,10 @@ def test_generative_qa_no_answer_code_2(app_client, mock_http_calls):
     assert response_body["detail"].keys() == {
         "code",
         "detail",
-        "raw_answer",
+        "answer",
     }
     assert response_body["detail"]["code"] == 2
-    assert (
-        response_body["detail"]["raw_answer"]
-        == f"{ERROR_SEPARATOR}I don't know \n{SOURCES_SEPARATOR}:"
-    )
+    assert response_body["detail"]["answer"] == "I don't know."
 
 
 def test_generative_qa_code_6(app_client, mock_http_calls):
@@ -188,10 +180,10 @@ def test_generative_qa_code_6(app_client, mock_http_calls):
     assert response_body["detail"].keys() == {
         "code",
         "detail",
-        "raw_answer",
+        "answer",
     }
     assert response_body["detail"]["code"] == 6
-    assert response_body["detail"]["raw_answer"] == f"{ERROR_SEPARATOR}I don't"
+    assert response_body["detail"]["answer"] == "I don't"
 
 
 def test_generative_qa_context_too_long(app_client, mock_http_calls):
@@ -308,60 +300,77 @@ def test_generative_qa_metadata_retriever_external_apis(app_client):
 
 async def streamed_response(**kwargs):
     response = [
-        "This",
-        " is",
-        " an",
-        " amazingly",
-        " well",
-        " streamed",
-        " response",
-        ".",
-        " I",
-        " can",
-        "'t",
-        " believe",
-        " how",
-        " good",
-        " it",
-        " is",
+        '{"has_answer": ',
+        "true, ",
+        '"answer": ',
+        "This ",
+        "is ",
+        "an ",
+        "amazingly ",
+        "well ",
+        "streamed ",
+        "response",
+        ". ",
+        "I ",
+        "can",
+        "'t ",
+        "believe ",
+        "how ",
+        "good ",
+        "it ",
+        "is",
         "!",
-        "\n",
-        "<b",
-        "bs",
-        "_sources",
-        ">:",
-        " ",
-        "0",
-        ",",
-        " ",
-        "1",
-        ",",
-        " ",
-        "2",
+        ", ",
+        '"paragraphs": ',
+        "[0,1,2]}",
     ]
+    parsed = {}
     for word in response:
-        yield word
+        if word == "true, ":
+            parsed["has_answer"] = True
+        if word == ", ":
+            parsed["answer"] = (
+                "This is an amazingly well streamed response . I can't believe how good it is !"
+            )
+        if word == "[0,1,2]}":
+            parsed["paragraphs"] = [0, 1, 2]
+        yield word, parsed
+    yield (
+        "",
+        GenerativeQAOutput(
+            has_answer=True,
+            answer="This is an amazingly well streamed response . I can't believe how good it is !",
+            paragraphs=[0, 1, 2],
+        ),
+    )
     raise RuntimeError("stop")
 
 
 async def streamed_response_no_answer(**kwargs):
     response = [
-        "<b",
-        "bs",
-        "_error",
-        ">I",
-        " don",
-        r"'t",
-        " know",
-        r" \"",
-        "n",
-        "<b",
-        "bs",
-        "_sources",
-        ">:",
+        '{"has_answer": ',
+        "false, ",
+        '"answer": ',
+        "I ",
+        "don",
+        "'t ",
+        "know.",
+        ", " '"paragraphs": ',
+        "[]}",
     ]
+    parsed = {}
     for word in response:
-        yield word
+        if word == "false, ":
+            parsed["has_answer"] = False
+        if word == "'t ":
+            parsed["answer"] = "I don't know."
+        if word == "[]}":
+            parsed["paragraphs"] = []
+        yield word, parsed
+    yield (
+        "",
+        GenerativeQAOutput(has_answer=False, answer="I don't know.", paragraphs=[]),
+    )
     raise RuntimeError("stop")
 
 
@@ -373,7 +382,6 @@ async def test_streamed_generative_qa(app_client, redis_fixture, mock_http_calls
     override_rts(has_context=True)
     FakeQAS = override_generative_qas()
     FakeQAS.astream = streamed_response
-    FakeQAS._process_raw_output = GenerativeQAWithSources._process_raw_output
 
     params = {}
     expected_tokens = (
@@ -407,7 +415,6 @@ async def test_streamed_generative_qa(app_client, redis_fixture, mock_http_calls
         resp = "".join(resp)
 
         assert "<bbs_json_data>" in resp
-        assert resp.split("<bbs_json_data>")[0].endswith("\n")
 
         index_response = resp.split("<bbs_json_data>")
         response_str = index_response[1]
@@ -445,7 +452,6 @@ async def test_streamed_generative_qa_error(app_client, redis_fixture):
     override_rts(has_context=True)
     FakeQAS = override_generative_qas()
     FakeQAS.astream = streamed_response_no_answer
-    FakeQAS._process_raw_output = GenerativeQAWithSources._process_raw_output
 
     params = {}
     expected_tokens = "<bbs_json_error>"  # We expect an empty answer.
