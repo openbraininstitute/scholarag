@@ -1,5 +1,5 @@
 from datetime import datetime
-from unittest.mock import AsyncMock, PropertyMock, patch
+from unittest.mock import AsyncMock, Mock, PropertyMock, patch
 
 import pytest
 from fastapi import HTTPException
@@ -13,6 +13,7 @@ from scholarag.app.middleware import (
     get_and_set_cache,
     get_cache,
     select_relevant_settings,
+    set_cache,
     strip_path_prefix,
 )
 from starlette.datastructures import MutableHeaders
@@ -195,6 +196,60 @@ async def test_get_and_set_cache_without_cache():
 
 
 @pytest.mark.asyncio
+async def test_set_cache():
+    fake_request = Request(
+        scope={
+            "type": "http",
+            "query_string": "Best query string I have ever seen, woah.",
+            "path": "/suggestions/journal",
+            "method": "POST",
+            "headers": {},
+        },
+    )
+    fake_body = """{"param": "This is request param"}""".encode("utf-8")
+
+    async def get_request_body():
+        return fake_body
+
+    fake_request.body = get_request_body
+
+    test_settings = Settings(
+        db={
+            "db_type": "elasticsearch",
+            "index_paragraphs": "foo",
+            "index_journals": "bar",
+            "host": "host.com",
+            "port": 1515,
+        },
+    )
+
+    fake_request_key = "Super_believable_request_key"
+
+    redis_mock = AsyncMock()
+    redis_mock.exists.return_value = False
+
+    response_mock = Mock()
+    type(response_mock).status_code = PropertyMock(return_value=200)
+    type(response_mock).headers = PropertyMock(return_value=MutableHeaders())
+    type(response_mock).media_type = PropertyMock(return_value=None)
+
+    with (
+        patch("scholarag.app.middleware.get_cache", lambda settings: redis_mock),
+    ):
+        _ = await set_cache(
+            response_mock,
+            fake_body,
+            test_settings,
+            fake_request,
+            redis_mock,
+            fake_request_key,
+        )
+
+    # Test redis
+    redis_mock.set.assert_called_once()
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize(
     "response_body",
     [
@@ -214,7 +269,6 @@ async def test_get_and_set_cache_with_cache_key_not_in_db(response_body):
             "headers": {},
         },
     )
-
     body = """{"param": "This is request param"}""".encode("utf-8")
 
     async def get_request_body():
