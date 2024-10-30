@@ -20,6 +20,7 @@ from scholarag.services import ParsingService
         "pypdf_pdf",
     ],
 )
+@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
 def test_run(parser, tmp_path, httpx_mock):
     """Test etl."""
     extension = "xml" if "xml" in parser else "pdf"
@@ -83,6 +84,7 @@ def test_run(parser, tmp_path, httpx_mock):
         "pypdf_pdf",
     ],
 )
+@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
 @pytest.mark.asyncio
 async def test_arun(parser, tmp_path, httpx_mock):
     """Test etl."""

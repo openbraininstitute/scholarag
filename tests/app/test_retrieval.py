@@ -190,10 +190,10 @@ async def test_article_count(
 
 
 @pytest.mark.asyncio
-async def test_article_listing(get_testing_async_ds_client, request):
+@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
+async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     ds_client, parameters = get_testing_async_ds_client
 
-    request.getfixturevalue("mock_http_calls")
     test_settings = Settings(
         db={
             "db_type": (

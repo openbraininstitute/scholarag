@@ -10,6 +10,7 @@ from scholarag.services import ParsingService
 
 
 @pytest.mark.asyncio
+@pytest.mark.httpx_mock(can_send_already_matched_responses=True)
 async def test_pmc_parse_and_upload(httpx_mock, get_testing_async_ds_client):
     ds_client, parameters = get_testing_async_ds_client
     index = "paragraphs_parse_script_pytest"

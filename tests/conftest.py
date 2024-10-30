@@ -187,7 +187,7 @@ def disable_sentry(monkeypatch):
 
 
 @pytest.fixture()
-def mock_http_calls(httpx_mock, non_mocked_hosts):
+def mock_http_calls(httpx_mock):
     httpx_mock.add_response(
         url="https://portal.issn.org/resource/ISSN/1234-5678",
         method="GET",
@@ -199,8 +199,6 @@ def mock_http_calls(httpx_mock, non_mocked_hosts):
         method="GET",
         json={"citationCount": 2},
     )
-    non_mocked_hosts.append("testserver")
-    non_mocked_hosts.append("test")
     with (
         patch("scholarag.retrieve_metadata.recreate_abstract") as abstract,
         patch("scholarag.retrieve_metadata.get_impact_factors") as impact,
