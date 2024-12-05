@@ -1,5 +1,7 @@
 """Tests for the suggestions endpoints."""
 
+from unittest.mock import AsyncMock
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 from scholarag.app.config import Settings
@@ -684,3 +686,61 @@ async def test_journal_duplicates(get_testing_async_ds_client):
         assert set(d.keys()) == expected_keys
         assert d["eissn"] == expected_result["eissn"]
         assert d["print_issn"] == expected_result["print_issn"]
+
+
+@pytest.mark.asyncio
+async def test_author_suggestion_with_spaces():
+    # Override the get_settings dependency
+    test_settings = Settings(
+        db={
+            "db_type": "elasticsearch",
+            "index_paragraphs": "pmc_paragraphs2",
+            "host": "localhost",
+            "port": 9200,
+            "user": "test_user",
+            "password": "test_password",
+        }
+    )
+    app.dependency_overrides[get_settings] = lambda: test_settings
+
+    # Mock the get_ds_client dependency
+    mock_ds_client = AsyncMock()
+    mock_ds_client.search.return_value = {
+        "hits": {
+            "total": {"value": 1, "relation": "eq"},
+            "hits": [{"_source": {"authors": ["Jing Yuan"]}}],
+        }
+    }
+    app.dependency_overrides[get_ds_client] = lambda: mock_ds_client
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://test"
+    ) as client:
+        # Test with a name containing spaces
+        response_with_spaces = await client.get(
+            "/suggestions/author", params={"name": "jing yuan", "limit": 100}
+        )
+        assert (
+            response_with_spaces.status_code != 500
+        ), "Request with spaces should not return 500"
+
+        # Test with a name without spaces
+        response_without_spaces = await client.get(
+            "/suggestions/author", params={"name": "jing", "limit": 100}
+        )
+        assert (
+            response_without_spaces.status_code == 200
+        ), "Request without spaces should return 200"
+
+        # Optionally, check the response content
+        response_with_spaces_json = response_with_spaces.json()
+        response_without_spaces_json = response_without_spaces.json()
+
+        # Ensure the responses are as expected
+        assert isinstance(response_with_spaces_json, list), "Response should be a list"
+        assert isinstance(
+            response_without_spaces_json, list
+        ), "Response should be a list"
+
+    # Clean up dependency overrides
+    app.dependency_overrides.clear()
