@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.8] - 10.12.2024
+
 ### Fixed
-- Fix whitespace issue in author suggestion
+- Fix whitespace issue in author suggestion.
 
 ## [0.0.7] - 30.10.2024
 
