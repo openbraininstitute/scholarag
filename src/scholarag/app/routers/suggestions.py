@@ -8,7 +8,12 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 
 from scholarag.app.config import Settings
-from scholarag.app.dependencies import ErrorCode, get_ds_client, get_settings
+from scholarag.app.dependencies import (
+    ErrorCode,
+    get_ds_client,
+    get_settings,
+    get_user_id,
+)
 from scholarag.app.schemas import (
     ArticleTypeSuggestionResponse,
     AuthorSuggestionRequest,
@@ -19,7 +24,9 @@ from scholarag.app.schemas import (
 from scholarag.document_stores import AsyncBaseSearch
 from scholarag.utils import format_issn
 
-router = APIRouter(prefix="/suggestions", tags=["Suggestions"])
+router = APIRouter(
+    prefix="/suggestions", tags=["Suggestions"], dependencies=[Depends(get_user_id)]
+)
 
 logger = logging.getLogger(__name__)
 

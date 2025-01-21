@@ -17,6 +17,7 @@ from scholarag.app.dependencies import (
     get_reranker,
     get_rts,
     get_settings,
+    get_user_id,
 )
 from scholarag.app.schemas import (
     ArticleCountResponse,
@@ -28,7 +29,9 @@ from scholarag.document_stores import AsyncBaseSearch
 from scholarag.retrieve_metadata import MetaDataRetriever
 from scholarag.services import CohereRerankingService, RetrievalService
 
-router = APIRouter(prefix="/retrieval", tags=["Retrieval"])
+router = APIRouter(
+    prefix="/retrieval", tags=["Retrieval"], dependencies=[Depends(get_user_id)]
+)
 
 logger = logging.getLogger(__name__)
 
