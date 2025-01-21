@@ -355,7 +355,7 @@ async def streamed_response_no_answer(**kwargs):
         "don",
         "'t ",
         "know.",
-        ", " '"paragraphs": ',
+        ', "paragraphs": ',
         "[]}",
     ]
     parsed = {}
