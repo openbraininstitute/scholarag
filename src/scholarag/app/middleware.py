@@ -252,9 +252,9 @@ async def get_and_set_cache(
     try:
         sub = await get_user_id(
             request=request,
-            token=token,
+            token=token,  # type: ignore
             settings=settings,
-            httpx_client=httpx_client,  # type: ignore
+            httpx_client=httpx_client,
         )
         request.state.sub = sub
     except HTTPException as e:
