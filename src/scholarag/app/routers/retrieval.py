@@ -90,7 +90,7 @@ async def retrieval(
     -------
         A list of article titles and paragraphs.
     """  # noqa: D301, D400, D205
-    if len(request.query) > 10000:
+    if len(request.query) > settings.misc.query_max_size:
         raise HTTPException(status_code=413, detail="Query string too long.")
     start = time.time()
     logger.info("Finding documents ...")
