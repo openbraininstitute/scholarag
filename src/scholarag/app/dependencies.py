@@ -63,7 +63,7 @@ async def get_httpx_client(
 
 async def get_user_id(
     request: Request,
-    token: Annotated[str, Depends(auth)] | None,
+    token: Annotated[str, Depends(auth)],
     settings: Annotated[Settings, Depends(get_settings)],
     httpx_client: Annotated[AsyncClient, Depends(get_httpx_client)],
 ) -> str:
@@ -119,7 +119,7 @@ async def get_ds_client(
                 port=settings.db.port,
                 user=settings.db.user,
                 password=password,
-                use_ssl_and_verify_certs=True,
+                use_ssl_and_verify_certs=False,
             )
             yield ds_client
     finally:
