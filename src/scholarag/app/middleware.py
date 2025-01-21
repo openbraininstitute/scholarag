@@ -251,7 +251,7 @@ async def get_and_set_cache(
     # If raises HTTPException return error as json.
     try:
         sub = await get_user_id(
-            request=request, token=token, settings=settings, httpx_client=httpx_client
+            request=request, token=token, settings=settings, httpx_client=httpx_client #type: ignore
         )
         request.state.sub = sub
     except HTTPException as e:
