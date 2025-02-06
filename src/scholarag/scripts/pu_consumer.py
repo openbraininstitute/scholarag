@@ -258,7 +258,7 @@ async def run(
                 for file, message in zip(files, batch):
                     url = (
                         parser_url
-                        + f'/{message["MessageAttributes"]["Parser_Endpoint"]["StringValue"]}'
+                        + f"/{message['MessageAttributes']['Parser_Endpoint']['StringValue']}"
                     )
                     result = await parser_service.arun(
                         files=[file],
@@ -309,7 +309,7 @@ async def run(
                     else:
                         logger.info(
                             f"[WORKER {worker_n}] Successfully deleted"
-                            f" {len(to_delete_from_q[i:min(i+10, len(to_delete_from_q))])} entries"
+                            f" {len(to_delete_from_q[i : min(i + 10, len(to_delete_from_q))])} entries"
                             " from the queue."
                         )
     except BaseException as e:

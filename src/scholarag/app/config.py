@@ -4,10 +4,8 @@ import os
 from typing import Literal
 
 from dotenv import dotenv_values
-from fastapi.openapi.models import OAuthFlowPassword, OAuthFlows
-from pydantic import BaseModel, ConfigDict, SecretStr, model_validator
+from pydantic import BaseModel, ConfigDict, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing_extensions import Self
 
 from scholarag.generative_question_answering import MESSAGES
 
@@ -15,22 +13,22 @@ from scholarag.generative_question_answering import MESSAGES
 class SettingsKeycloak(BaseModel):
     """Class retrieving keycloak info for authorization."""
 
-    issuer: str | None = None
+    issuer: str = "https://openbluebrain.com/auth/realms/SBO"
     validate_token: bool = False
+    # Useful only for service account (dev)
+    client_id: str | None = None
+    username: str | None = None
+    password: SecretStr | None = None
 
     model_config = ConfigDict(frozen=True)
 
-    @model_validator(mode="after")
-    def check_issuer(self) -> Self:
-        """Check if there is an issuer provided for authentication."""
-        if self.validate_token and (self.issuer is None):
-            raise ValueError("No issuer provided.")
-        return self
-
     @property
-    def token_endpoint(self) -> str:
+    def token_endpoint(self) -> str | None:
         """Define the token endpoint."""
-        return f"{self.issuer}/protocol/openid-connect/token"
+        if self.validate_token:
+            return f"{self.issuer}/protocol/openid-connect/token"
+        else:
+            return None
 
     @property
     def user_info_endpoint(self) -> str | None:
@@ -41,13 +39,14 @@ class SettingsKeycloak(BaseModel):
             return None
 
     @property
-    def flows(self) -> OAuthFlows:
-        """Define the flow to override Fastapi's one."""
-        return OAuthFlows(
-            password=OAuthFlowPassword(
-                tokenUrl=self.token_endpoint,
-            ),
-        )
+    def server_url(self) -> str:
+        """Server url."""
+        return self.issuer.split("/auth")[0] + "/auth/"
+
+    @property
+    def realm(self) -> str:
+        """Realm."""
+        return self.issuer.rpartition("/realms/")[-1]
 
 
 class SettingsDB(BaseModel):

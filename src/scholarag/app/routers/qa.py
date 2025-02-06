@@ -22,6 +22,7 @@ from scholarag.app.dependencies import (
     get_reranker,
     get_rts,
     get_settings,
+    get_user_id,
 )
 from scholarag.app.schemas import (
     GenerativeQARequest,
@@ -36,7 +37,9 @@ from scholarag.generative_question_answering import GenerativeQAWithSources
 from scholarag.retrieve_metadata import MetaDataRetriever
 from scholarag.services import CohereRerankingService, RetrievalService
 
-router = APIRouter(prefix="/qa", tags=["Question answering"])
+router = APIRouter(
+    prefix="/qa", tags=["Question answering"], dependencies=[Depends(get_user_id)]
+)
 
 logger = logging.getLogger(__name__)
 

@@ -181,7 +181,7 @@ async def run(
             s3_iterator = s3_paginator.paginate(Bucket="pmc-oa-opendata", Prefix=prefix)
             logger.info("Filtering interesting articles.")
             filtered_iterator = s3_iterator.search(
-                f"""Contents[?to_string(LastModified)>='\"{start_date.strftime('%Y-%m-%d %H:%M:%S%')}+00:00\"'
+                f"""Contents[?to_string(LastModified)>='\"{start_date.strftime("%Y-%m-%d %H:%M:%S%")}+00:00\"'
                     && contains(Key, '.xml')]"""
             )
             finished = False

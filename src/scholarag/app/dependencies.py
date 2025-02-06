@@ -7,8 +7,8 @@ from functools import cache
 from typing import Annotated, AsyncIterator
 
 from elasticsearch_dsl import Q, Search
-from fastapi import Depends, HTTPException, Query
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, Query, Request
+from fastapi.security import HTTPBearer
 from httpx import AsyncClient, HTTPStatusError
 from openai import AsyncOpenAI
 from pydantic import constr
@@ -27,10 +27,17 @@ logger = logging.getLogger(__name__)
 
 journal_constraints = constr(pattern=r"^\d{4}-\d{3}[0-9X]$")
 
-auth = OAuth2PasswordBearer(
-    tokenUrl="/token",  # Will be overriden
-    auto_error=False,
-)
+
+class HTTPBearerDirect(HTTPBearer):
+    """HTTPBearer class that returns directly the token in the call."""
+
+    async def __call__(self, request: Request) -> str | None:  # type: ignore
+        """Intercept the bearer token in the headers."""
+        auth_credentials = await super().__call__(request)
+        return auth_credentials.credentials if auth_credentials else None
+
+
+auth = HTTPBearerDirect(auto_error=False)
 
 
 @cache
@@ -55,24 +62,30 @@ async def get_httpx_client(
 
 
 async def get_user_id(
-    token: Annotated[str | None, Depends(auth)],
+    request: Request,
+    token: Annotated[str, Depends(auth)],
     settings: Annotated[Settings, Depends(get_settings)],
     httpx_client: Annotated[AsyncClient, Depends(get_httpx_client)],
 ) -> str:
     """Validate JWT token and returns user ID."""
-    if settings.keycloak.validate_token and settings.keycloak.user_info_endpoint:
-        try:
-            response = await httpx_client.get(
-                settings.keycloak.user_info_endpoint,
-                headers={"Authorization": f"Bearer {token}"},
-            )
-            response.raise_for_status()
-            user_info = response.json()
-            return user_info["sub"]
-        except HTTPStatusError:
-            raise HTTPException(
-                status_code=HTTP_401_UNAUTHORIZED, detail="Invalid token."
-            )
+    if hasattr(request.state, "sub"):
+        return request.state.sub
+    if settings.keycloak.validate_token:
+        if settings.keycloak.user_info_endpoint:
+            try:
+                response = await httpx_client.get(
+                    settings.keycloak.user_info_endpoint,
+                    headers={"Authorization": f"Bearer {token}"},
+                )
+                response.raise_for_status()
+                user_info = response.json()
+                return user_info["sub"]
+            except HTTPStatusError:
+                raise HTTPException(
+                    status_code=HTTP_401_UNAUTHORIZED, detail="Invalid token."
+                )
+        else:
+            raise HTTPException(status_code=404, detail="user info url not provided.")
     else:
         return "dev"
 

@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 from fastapi.exceptions import HTTPException
 from httpx import AsyncClient
@@ -66,11 +68,23 @@ async def test_get_user_id(httpx_mock, monkeypatch):
         json=fake_response,
     )
 
+    request = Mock()
     settings = Settings()
     client = AsyncClient()
     token = "eyJgreattoken"
-    user = await get_user_id(token=token, settings=settings, httpx_client=client)
 
+    # Checks for the user sub in the request state.
+    request.state.sub = "test_sub"
+    user = await get_user_id(
+        request=request, token=token, settings=settings, httpx_client=client
+    )
+    assert user == "test_sub"
+
+    # Check for the user sub from keycloack.
+    delattr(request.state, "sub")
+    user = await get_user_id(
+        request=request, token=token, settings=settings, httpx_client=client
+    )
     assert user == "12345"
 
 
@@ -92,8 +106,13 @@ async def test_get_user_id_error(httpx_mock, monkeypatch):
     client = AsyncClient()
     token = "eyJgreattoken"
 
+    request = Mock()
+    delattr(request.state, "sub")
+
     with pytest.raises(HTTPException) as err:
-        await get_user_id(token=token, settings=settings, httpx_client=client)
+        await get_user_id(
+            request=request, token=token, settings=settings, httpx_client=client
+        )
 
     assert err.value.status_code == 401
     assert err.value.detail == "Invalid token."
