@@ -104,6 +104,11 @@ async def passthrough(
     -------
         A single answer.
     """  # noqa: D301, D400, D205
+    if len(request.query) > settings.misc.query_max_size:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Query string has {len(request.query)} characters. Maximum allowed is {settings.misc.query_max_size}.",
+        )
     start = time.time()
     logger.info("Finding answers ...")
     try:
@@ -240,6 +245,11 @@ async def generative_qa(
     -------
         A single answer with metadata of each relevant source.
     """  # noqa: D301, D400, D205
+    if len(request.query) > settings.misc.query_max_size:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Query string has {len(request.query)} characters. Maximum allowed is {settings.misc.query_max_size}.",
+        )
     start = time.time()
     logger.info("Finding answers ...")
 
@@ -460,6 +470,11 @@ async def streamed_generative_qa(
     -------
         A single answer with metadata of each relevant source.
     """  # noqa: D301, D400, D205
+    if len(request.query) > settings.misc.query_max_size:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Query string has {len(request.query)} characters. Maximum allowed is {settings.misc.query_max_size}.",
+        )
     start = time.time()
     logger.info("Finding answers ...")
 
