@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+[0.0.9] - 14.02.2025
+
 ### Added
 - Bearer token insertion in FastAPI UI.
 
