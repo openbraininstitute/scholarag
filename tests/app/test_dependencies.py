@@ -174,8 +174,6 @@ async def test_get_reranker_cohere(monkeypatch):
 
 
 def test_get_query_from_params():
-    topics = ["pyramidal cells", "retina"]
-    regions = ["brain region", "thalamus"]
     article_types = ["publication", "review"]
     authors = ["Guy Manderson", "Joe Guy"]
     journals = ["1111-1111"]
@@ -185,15 +183,6 @@ def test_get_query_from_params():
     expected = {
         "bool": {
             "must": [
-                {
-                    "query_string": {
-                        "default_field": "text",
-                        "query": (
-                            "((pyramidal AND cells) AND retina) AND ((brain AND region)"
-                            " OR thalamus)"
-                        ),
-                    }
-                },
                 {"terms": {"article_type": ["publication", "review"]}},
                 {"terms": {"authors": ["Guy Manderson", "Joe Guy"]}},
                 {"terms": {"journal": ["1111-1111"]}},
@@ -204,8 +193,6 @@ def test_get_query_from_params():
     }
 
     query = get_query_from_params(
-        topics=topics,
-        regions=regions,
         article_types=article_types,
         authors=authors,
         journals=journals,

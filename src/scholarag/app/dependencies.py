@@ -176,20 +176,6 @@ async def get_reranker(
 
 
 def get_query_from_params(
-    # topics: Annotated[
-    #     list[str] | None,
-    #     Query(
-    #         description="Keyword to be matched in text. AND matching (e.g. for TOPICS)."
-    #     ),
-    # ] = None,
-    # regions: Annotated[
-    #     list[str] | None,
-    #     Query(
-    #         description=(
-    #             "Keyword to be matched in text. OR matching (e.g. for BRAIN_REGIONS)."
-    #         )
-    #     ),
-    # ] = None,
     article_types: Annotated[
         list[str] | None, Query(description="Article types allowed. OR matching")
     ] = None,

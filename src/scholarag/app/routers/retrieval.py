@@ -2,7 +2,7 @@
 
 import logging
 import time
-from typing import Annotated, Any
+from typing import Annotated, Any, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_pagination import Page, paginate
@@ -220,32 +220,34 @@ async def article_count(
         )
     else:
         # Match the keywords on abstract + title.
-        keywords = ([topic.split(" ") for topic in topics] or []) + (
-            [region.split(" ") for region in regions] or []
-        )
-        query = {
+        query: Dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
-                        {
-                            "multi_match": {
-                                "query": wo,
-                                "fields": ["title", "text"],
-                            }
-                        }
-                        # {
-                        #     "multi_match": {
-                        #         "query": " ".join(regions),
-                        #         "fields": ["title", "text"],
-                        #     }
-                        # },
-                        for words in keywords
-                        for wo in words
+                        {"term": {"section": "Abstract"}},
                     ]
                 }
             }
         }
-        query["query"]["bool"]["must"].append({"term": {"section": "Abstract"}})
+        if topics:
+            query["query"]["bool"]["must"].append(
+                {
+                    "multi_match": {
+                        "query": " ".join(topics),
+                        "fields": ["title", "text"],
+                    }
+                }
+            )
+        if regions:
+            query["query"]["bool"]["must"].append(
+                {
+                    "multi_match": {
+                        "query": " ".join(regions),
+                        "fields": ["title", "text"],
+                    }
+                }
+            )
+
     # If further filters, append them
     if filter_query:
         query["query"]["bool"]["must"].append(filter_query["bool"]["must"])
@@ -358,29 +360,36 @@ async def article_listing(
             status_code=422, detail="Please provide at least one region or topic."
         )
     else:
-        keywords = ([topic.split(" ") for topic in topics] or []) + (
-            [region.split(" ") for region in regions] or []
-        )
-        query = {
+        query: Dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
-                        {
-                            "multi_match": {
-                                "query": wo,
-                                "fields": ["title", "text"],
-                            }
-                        }
-                        for words in keywords
-                        for wo in words
+                        {"term": {"section": "Abstract"}},
                     ]
                 }
             }
         }
-        query["query"]["bool"]["must"].append({"term": {"section": "Abstract"}})
+        if topics:
+            query["query"]["bool"]["must"].append(
+                {
+                    "multi_match": {
+                        "query": " ".join(topics),
+                        "fields": ["title", "text"],
+                    }
+                }
+            )
+        if regions:
+            query["query"]["bool"]["must"].append(
+                {
+                    "multi_match": {
+                        "query": " ".join(regions),
+                        "fields": ["title", "text"],
+                    }
+                }
+            )
 
     # If further filters, append them
-    if filter_query:
+    if filter_query and filter_query.get("bool"):
         query["query"]["bool"]["must"].append(filter_query["bool"]["must"])
 
     aggs: dict[str, Any] = {
