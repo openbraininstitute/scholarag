@@ -176,20 +176,20 @@ async def get_reranker(
 
 
 def get_query_from_params(
-    topics: Annotated[
-        list[str] | None,
-        Query(
-            description="Keyword to be matched in text. AND matching (e.g. for TOPICS)."
-        ),
-    ] = None,
-    regions: Annotated[
-        list[str] | None,
-        Query(
-            description=(
-                "Keyword to be matched in text. OR matching (e.g. for BRAIN_REGIONS)."
-            )
-        ),
-    ] = None,
+    # topics: Annotated[
+    #     list[str] | None,
+    #     Query(
+    #         description="Keyword to be matched in text. AND matching (e.g. for TOPICS)."
+    #     ),
+    # ] = None,
+    # regions: Annotated[
+    #     list[str] | None,
+    #     Query(
+    #         description=(
+    #             "Keyword to be matched in text. OR matching (e.g. for BRAIN_REGIONS)."
+    #         )
+    #     ),
+    # ] = None,
     article_types: Annotated[
         list[str] | None, Query(description="Article types allowed. OR matching")
     ] = None,
@@ -219,36 +219,6 @@ def get_query_from_params(
 ) -> dict[str, str] | None:
     """Get the query parameters and generate an ES query for filtering."""
     search = Search()
-    search_elems = []
-    if topics:
-        linked_tokens = [
-            (
-                " AND ".join(("(" + keyword + ")").split(" "))
-                if len(keyword.split(" ")) >= 2
-                else keyword
-            )
-            for keyword in topics
-        ]
-        topics_bool = f"({' AND '.join(linked_tokens)})"
-        search_elems.append(topics_bool)
-
-    if regions:
-        linked_tokens = [
-            (
-                " AND ".join(("(" + keyword + ")").split(" "))
-                if len(keyword.split(" ")) >= 2
-                else keyword
-            )
-            for keyword in regions
-        ]
-        regions_bool = f"({' OR '.join(linked_tokens)})"
-        search_elems.append(regions_bool)
-
-    if topics or regions:
-        q = Q(
-            "query_string", default_field="text", query=f"{' AND '.join(search_elems)}"
-        )
-        search = search.query(q)
     if article_types:
         search = search.query(Q("terms", article_type=article_types))
     if authors:
