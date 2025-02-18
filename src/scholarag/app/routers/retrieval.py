@@ -177,8 +177,8 @@ async def retrieval(
 
 @router.get("/article_count")
 async def article_count(
+    request: Request,
     ds_client: Annotated[AsyncBaseSearch, Depends(get_ds_client)],
-    filter_query: Annotated[dict[str, Any], Depends(get_query_from_params)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> ArticleCountResponse:
     """Article count based on keyword matching.
@@ -199,7 +199,29 @@ async def article_count(
     """  # noqa: D301, D400, D205
     start = time.time()
     logger.info("Finding unique articles matching the query ...")
-    query = filter_query
+
+    params = request.query_params
+    topics = params.getlist("topics")
+    regions = params.getlist("regions")
+
+    if topics or regions:
+        query = {
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "multi_match": {
+                                "query": " ".join(topics) + " " + " ".join(regions),
+                                "fields": ["title", "text"],
+                            }
+                        },
+                        {"term": {"section": "Abstract"}},
+                    ]
+                }
+            }
+        }
+    else:
+        query = {"query": {"match_all": {}}}
 
     # Aggregation query.
     aggs = {
@@ -300,14 +322,17 @@ async def article_listing(
             "query": {
                 "bool": {
                     "must": [
-                        {"match": {"text": " ".join(topics) + " " + " ".join(regions)}}
-                    ],
-                    "filter": filter_query,
+                        {
+                            "multi_match": {
+                                "query": " ".join(topics) + " " + " ".join(regions),
+                                "fields": ["title", "text"],
+                            }
+                        },
+                        {"term": {"section": "Abstract"}},
+                    ]
                 }
-            },
+            }
         }
-    elif filter_query and not topics and not regions:
-        query = {"query": {"match_all": {}}, "filter": filter_query}
     else:
         query = {"query": {"match_all": {}}}
 
@@ -329,8 +354,9 @@ async def article_listing(
         aggs["relevant_ids"]["aggs"]["score"]["max"] = {"field": "date"}
 
     results = await ds_client.search(
-        index=settings.db.index_paragraphs, query=query, size=0, aggs=aggs
+        index=settings.db.index_paragraphs, query=query, size=78, aggs=aggs
     )
+    breakpoint()
     logger.info(f"unique article retrieval took: {time.time() - start}s")
 
     docs = [
