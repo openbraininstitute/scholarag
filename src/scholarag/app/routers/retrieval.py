@@ -356,7 +356,6 @@ async def article_listing(
     results = await ds_client.search(
         index=settings.db.index_paragraphs, query=query, size=78, aggs=aggs
     )
-    breakpoint()
     logger.info(f"unique article retrieval took: {time.time() - start}s")
 
     docs = [
