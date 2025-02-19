@@ -250,7 +250,7 @@ async def article_count(
 
     # If further filters, append them
     if filter_query:
-        query["query"]["bool"]["must"].append(filter_query["bool"]["must"])
+        query["query"]["bool"]["must"].append(filter_query)
 
     # Aggregation query.
     aggs = {
@@ -389,8 +389,8 @@ async def article_listing(
             )
 
     # If further filters, append them
-    if filter_query and filter_query.get("bool"):
-        query["query"]["bool"]["must"].append(filter_query["bool"]["must"])
+    if filter_query:
+        query["query"]["bool"]["must"].append(filter_query)
 
     aggs: dict[str, Any] = {
         "relevant_ids": {

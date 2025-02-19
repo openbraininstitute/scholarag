@@ -112,10 +112,10 @@ def test_retrieval_no_answer_code_1(app_client):
         (None, ["3", "4"], None, None, 11),
         (["3", "4"], None, None, None, 11),
         (None, ["3 4"], None, None, 11),
-        # (None, None, None, None, 19),
-        # (None, None, "2022-12-01", None, 5),
-        # (None, None, None, "2022-01-01", 6),
-        # (None, None, "2022-03-01", "2022-06-01", 17),
+        (["0 1 2 3 4 5 6 7 8 9"], None, None, None, 19),
+        (["0 1 2 3 4 5 6 7 8 9"], None, "2022-12-01", None, 5),
+        (["0 1 2 3 4 5 6 7 8 9"], None, None, "2022-01-01", 6),
+        (["0 1 2 3 4 5 6 7 8 9"], None, "2022-03-01", "2022-06-01", 17),
     ],
 )
 async def test_article_count(
@@ -317,13 +317,12 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     response = response.json()
 
     assert sorted([resp["article_id"] for resp in response["items"]]) == [
+        "10",
         "11",
-        "12",
-        "13",
-        "17",
+        "18",
         "19",
-        "27",
-        "37",
+        "21",
+        "31",
         "47",
         "57",
         "7",
@@ -347,16 +346,16 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     response = response.json()
 
     assert sorted([resp["article_id"] for resp in response["items"]]) == [
-        "11",
+        "1",
         "12",
         "13",
+        "14",
+        "15",
+        "16",
         "17",
-        "19",
         "27",
         "37",
-        "47",
-        "57",
-        "7",
+        "51",
     ]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
