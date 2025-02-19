@@ -528,7 +528,7 @@ def test_caching_article_count(app_client, redis_fixture):
     with patch("scholarag.app.middleware.get_cache", redis_fixture):
         # First time to put in the cache
         response = app_client.get(
-            "/retrieval/article_count", params={"topics": "random topic"}
+            "/retrieval/article_count", params={"topics": "fake_title"}
         )
 
         assert response.json() == {"article_count": 10}
@@ -536,7 +536,7 @@ def test_caching_article_count(app_client, redis_fixture):
 
         # Second time to read in the cache
         response = app_client.get(
-            "/retrieval/article_count",
+            "/retrieval/article_count", params={"topics": "fake_title"}
         )
         assert response.json() == {"article_count": 10}
         assert response.headers["X-fastapi-cache"] == "Hit"
@@ -589,7 +589,7 @@ def test_caching_article_listing(app_client, redis_fixture, mock_http_calls):
     with patch("scholarag.app.middleware.get_cache", redis_fixture):
         # First time to put in the cache
         response = app_client.get(
-            "/retrieval/article_listing", params={"topics": "random topic"}
+            "/retrieval/article_listing", params={"topics": "test"}
         )
 
         assert response.json() == expected
@@ -597,7 +597,7 @@ def test_caching_article_listing(app_client, redis_fixture, mock_http_calls):
 
         # Second time to read in the cache
         response = app_client.get(
-            "/retrieval/article_listing",
+            "/retrieval/article_listing", params={"topics": "test"}
         )
         assert response.json() == expected
         assert response.headers["X-fastapi-cache"] == "Hit"
