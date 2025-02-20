@@ -2,7 +2,7 @@
 
 import logging
 import time
-from typing import Annotated, Any, Dict
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_pagination import Page, paginate
@@ -206,6 +206,10 @@ async def article_count(
         Filtering query for paragraph retrieval.
     settings
         Global settings of the application
+     topics
+        Keyword to be matched in text.
+    regions
+        Keyword to be matched in text.
 
     Returns
     -------
@@ -220,7 +224,7 @@ async def article_count(
         )
     else:
         # Match the keywords on abstract + title.
-        query: Dict[str, Any] = {
+        query: dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
@@ -343,6 +347,10 @@ async def article_listing(
         Filtering query for paragraph retrieval.
     settings
         Global settings of the application
+    topics
+        Keyword to be matched in text. OR matching.
+    regions
+        Keyword to be matched in text. OR matching.
     number_results
         Number of results to return. Max 10 000.
     sort_by_date
@@ -360,7 +368,7 @@ async def article_listing(
             status_code=422, detail="Please provide at least one region or topic."
         )
     else:
-        query: Dict[str, Any] = {
+        query: dict[str, Any] = {
             "query": {
                 "bool": {
                     "must": [
