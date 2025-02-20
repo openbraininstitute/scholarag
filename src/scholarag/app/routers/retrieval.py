@@ -234,13 +234,17 @@ async def article_count(
             }
         }
         if topics:
-            query["query"]["bool"]["must"].append(
-                {
-                    "multi_match": {
-                        "query": " ".join(topics),
-                        "fields": ["title", "text"],
+            query["query"]["bool"]["must"].extend(
+                [
+                    {
+                        "multi_match": {
+                            "query": wo,
+                            "fields": ["title", "text"],
+                        }
                     }
-                }
+                    for word in topics
+                    for wo in word.split(" ")
+                ]
             )
         if regions:
             query["query"]["bool"]["must"].append(
@@ -378,13 +382,17 @@ async def article_listing(
             }
         }
         if topics:
-            query["query"]["bool"]["must"].append(
-                {
-                    "multi_match": {
-                        "query": " ".join(topics),
-                        "fields": ["title", "text"],
+            query["query"]["bool"]["must"].extend(
+                [
+                    {
+                        "multi_match": {
+                            "query": wo,
+                            "fields": ["title", "text"],
+                        }
                     }
-                }
+                    for word in topics
+                    for wo in word.split(" ")
+                ]
             )
         if regions:
             query["query"]["bool"]["must"].append(
