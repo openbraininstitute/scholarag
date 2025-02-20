@@ -41,7 +41,7 @@ def test_generative_qa(app_client, mock_http_calls):
         "bool": {
             "must": [
                 {"terms": {"article_type": params["article_types"]}},
-                {"terms": {"authors": params["authors"]}},
+                {"terms": {"authors.keyword": params["authors"]}},
                 {"range": {"date": {"gte": params["date_from"]}}},
                 {"range": {"date": {"lte": params["date_to"]}}},
             ]

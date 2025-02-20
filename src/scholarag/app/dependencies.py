@@ -4,9 +4,8 @@ import json
 import logging
 from enum import Enum
 from functools import cache
-from typing import Annotated, AsyncIterator
+from typing import Annotated, Any, AsyncIterator
 
-from elasticsearch_dsl import Q, Search
 from fastapi import Depends, HTTPException, Query, Request
 from fastapi.security import HTTPBearer
 from httpx import AsyncClient, HTTPStatusError
@@ -202,24 +201,22 @@ def get_query_from_params(
             pattern=r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$",
         ),
     ] = None,
-) -> dict[str, str] | None:
+) -> dict[str, dict[str, list[dict[str, Any]]]] | None:
     """Get the query parameters and generate an ES query for filtering."""
-    search = Search()
+    query: dict[str, dict[str, list[dict[str, Any]]]] = {"bool": {"must": []}}
     if article_types:
-        search = search.query(Q("terms", article_type=article_types))
+        query["bool"]["must"].append({"terms": {"article_type": article_types}})
     if authors:
-        search = search.query(Q("terms", authors=authors))
+        query["bool"]["must"].append({"terms": {"authors.keyword": authors}})
     if journals:
-        search = search.query(Q("terms", journal=journals))
+        query["bool"]["must"].append({"terms": {"journal": journals}})
     if date_from:
-        search = search.query(Q("range", date={"gte": date_from}))
+        query["bool"]["must"].append({"range": {"date": {"gte": date_from}}})
     if date_to:
-        search = search.query(Q("range", date={"lte": date_to}))
+        query["bool"]["must"].append({"range": {"date": {"lte": date_to}}})
 
-    logger.info(
-        f"Searching the database with the query {json.dumps(search.to_dict())}."
-    )
-    return None if not search.to_dict() else search.to_dict()["query"]
+    logger.info(f"Searching the database with the query {json.dumps(query)}.")
+    return None if not query["bool"]["must"] else query
 
 
 class ErrorCode(Enum):

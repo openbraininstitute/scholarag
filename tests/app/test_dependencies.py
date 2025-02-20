@@ -184,7 +184,7 @@ def test_get_query_from_params():
         "bool": {
             "must": [
                 {"terms": {"article_type": ["publication", "review"]}},
-                {"terms": {"authors": ["Guy Manderson", "Joe Guy"]}},
+                {"terms": {"authors.keyword": ["Guy Manderson", "Joe Guy"]}},
                 {"terms": {"journal": ["1111-1111"]}},
                 {"range": {"date": {"gte": "2020-01-01"}}},
                 {"range": {"date": {"lte": "2020-01-02"}}},

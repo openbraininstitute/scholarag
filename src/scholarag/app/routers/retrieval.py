@@ -250,7 +250,7 @@ async def article_count(
 
     # If further filters, append them
     if filter_query:
-        query["query"]["bool"]["must"].append(filter_query)
+        query["query"]["bool"]["must"].extend(filter_query["bool"]["must"])
 
     # Aggregation query.
     aggs = {
@@ -390,7 +390,7 @@ async def article_listing(
 
     # If further filters, append them
     if filter_query:
-        query["query"]["bool"]["must"].append(filter_query)
+        query["query"]["bool"]["must"].extend(filter_query["bool"]["must"])
 
     aggs: dict[str, Any] = {
         "relevant_ids": {
@@ -410,8 +410,9 @@ async def article_listing(
         aggs["relevant_ids"]["aggs"]["score"]["max"] = {"field": "date"}
 
     results = await ds_client.search(
-        index=settings.db.index_paragraphs, query=query, size=78, aggs=aggs
+        index=settings.db.index_paragraphs, query=query, size=0, aggs=aggs
     )
+
     logger.info(f"unique article retrieval took: {time.time() - start}s")
 
     docs = [

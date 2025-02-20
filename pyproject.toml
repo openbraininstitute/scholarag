@@ -16,7 +16,6 @@ dependencies = [
     "boto3",
     "cohere",
     "elasticsearch >= 8.5",
-    "elasticsearch-dsl",
     "fastapi <= 0.112.0",
     "fastapi-pagination",
     "httpx",
