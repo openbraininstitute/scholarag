@@ -201,15 +201,15 @@ async def article_count(
     Parameters
     ----------
     ds_client
-        Document store client
+        Document store client.
     filter_query
         Filtering query for paragraph retrieval.
     settings
-        Global settings of the application
-     topics
-        Keyword to be matched in text.
+        Global settings of the application.
+    topics
+        Keywords to be matched in text. AND matches list elements.
     regions
-        Keyword to be matched in text.
+        Keywords to be matched in text. OR matches list elements.
 
     Returns
     -------
@@ -366,15 +366,15 @@ async def article_listing(
     filter_query
         Filtering query for paragraph retrieval.
     settings
-        Global settings of the application
+        Global settings of the application.
     topics
-        Keyword to be matched in text. OR matching.
+        Keywords to be matched in text. AND matches list elements.
     regions
-        Keyword to be matched in text. OR matching.
+        Keywords to be matched in text. OR matches list elements.
     number_results
         Number of results to return. Max 10 000.
     sort_by_date
-        Sort by date True or False. If the latter, we sort by relevance
+        Sort by date True or False. If the latter, we sort by best match.
 
     Returns
     -------
