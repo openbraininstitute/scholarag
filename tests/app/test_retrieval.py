@@ -106,16 +106,22 @@ def test_retrieval_no_answer_code_1(app_client):
     [
         (["1"], ["2"], None, None, 1),
         (["1"], ["1"], None, None, 10),
-        (["1", "2"], ["3"], None, None, 2),
+        (["1", "2"], ["3"], None, None, 0),
         (["1"], ["3", "4"], None, None, 2),
-        (["1", "2"], ["3", "4"], None, None, 3),
+        (["9", "1"], None, None, None, 1),
         (None, ["3", "4"], None, None, 11),
-        (["3", "4"], None, None, None, 11),
-        (None, ["3 4"], None, None, 11),
-        (["0 1 2 3 4 5 6 7 8 9"], None, None, None, 19),
-        (["0 1 2 3 4 5 6 7 8 9"], None, "2022-12-01", None, 5),
-        (["0 1 2 3 4 5 6 7 8 9"], None, None, "2022-01-01", 6),
-        (["0 1 2 3 4 5 6 7 8 9"], None, "2022-03-01", "2022-06-01", 17),
+        (None, ["3", "4"], "2022-12-01", None, 3),
+        (None, ["3", "4"], None, "2022-01-01", 3),
+        (None, ["3 4"], None, None, 1),
+        (["0 1 2 3 4 5 6 7 8 9"], None, None, None, 0),
+        (
+            None,
+            ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            "2022-03-01",
+            "2022-06-01",
+            17,
+        ),
+        (None, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], None, None, 19),
     ],
 )
 async def test_article_count(
@@ -248,18 +254,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == [
-        "1",
-        "11",
-        "12",
-        "13",
-        "16",
-        "2",
-        "4",
-        "6",
-        "7",
-        "9",
-    ]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["1", "16"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
@@ -316,17 +311,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == [
-        "10",
-        "11",
-        "18",
-        "19",
-        "21",
-        "31",
-        "47",
-        "57",
-        "7",
-    ]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["11"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
@@ -345,18 +330,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == [
-        "1",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "27",
-        "37",
-        "51",
-    ]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["17"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys

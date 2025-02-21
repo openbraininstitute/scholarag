@@ -23,7 +23,7 @@ MAPPINGS_PARAGRAPHS: dict[str, Any] = {
         "pubmed_id": {"type": "keyword"},
         "arxiv_id": {"type": "keyword"},
         "title": {"type": "text"},
-        "authors": {"type": "keyword"},
+        "authors": {"fields": {"keyword": {"type": "keyword"}}, "type": "text"},
         "journal": {"type": "keyword"},
         "date": {"type": "date", "format": "yyyy-MM-dd"},
         "section": {"type": "keyword"},

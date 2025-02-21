@@ -222,43 +222,58 @@ async def article_count(
         raise HTTPException(
             status_code=422, detail="Please provide at least one region or topic."
         )
-    else:
-        # Match the keywords on abstract + title.
-        query: dict[str, Any] = {
-            "query": {
+
+    # Match the keywords on abstract + title.
+    topic_query = (
+        [
+            {
+                "multi_match": {
+                    "query": topic,
+                    "type": "phrase",
+                    "slop": 2,
+                    "fields": ["title", "text"],
+                }
+            }
+            for topic in topics
+        ]
+        if topics is not None
+        else []
+    )
+    regions_query = (
+        [
+            {
                 "bool": {
-                    "must": [
-                        {"term": {"section": "Abstract"}},
+                    "should": [
+                        {
+                            "multi_match": {
+                                "query": region,
+                                "type": "phrase",
+                                "slop": 2,
+                                "fields": ["title", "text"],
+                            }
+                        }
+                        for region in regions
                     ]
                 }
             }
-        }
-        if topics:
-            query["query"]["bool"]["must"].extend(
-                [
-                    {
-                        "multi_match": {
-                            "query": wo,
-                            "fields": ["title", "text"],
-                        }
-                    }
-                    for word in topics
-                    for wo in word.split(" ")
-                ]
-            )
-        if regions:
-            query["query"]["bool"]["must"].append(
-                {
-                    "multi_match": {
-                        "query": " ".join(regions),
-                        "fields": ["title", "text"],
-                    }
-                }
-            )
+        ]
+        if regions is not None
+        else []
+    )
+    filter_query_list = filter_query["bool"]["must"] if filter_query else []
 
-    # If further filters, append them
-    if filter_query:
-        query["query"]["bool"]["must"].extend(filter_query["bool"]["must"])
+    query: dict[str, Any] = {
+        "query": {
+            "bool": {
+                "must": [
+                    {"term": {"section": "Abstract"}},
+                    *topic_query,
+                    *regions_query,
+                    *filter_query_list,
+                ]
+            }
+        }
+    }
 
     # Aggregation query.
     aggs = {
@@ -271,6 +286,7 @@ async def article_count(
             },
         }
     }
+
     results = await ds_client.search(
         index=settings.db.index_paragraphs, query=query, size=0, aggs=aggs
     )
@@ -371,42 +387,58 @@ async def article_listing(
         raise HTTPException(
             status_code=422, detail="Please provide at least one region or topic."
         )
-    else:
-        query: dict[str, Any] = {
-            "query": {
+
+    # Match the keywords on abstract + title.
+    topic_query = (
+        [
+            {
+                "multi_match": {
+                    "query": topic,
+                    "type": "phrase",
+                    "slop": 2,
+                    "fields": ["title", "text"],
+                }
+            }
+            for topic in topics
+        ]
+        if topics is not None
+        else []
+    )
+    regions_query = (
+        [
+            {
                 "bool": {
-                    "must": [
-                        {"term": {"section": "Abstract"}},
+                    "should": [
+                        {
+                            "multi_match": {
+                                "query": region,
+                                "type": "phrase",
+                                "slop": 2,
+                                "fields": ["title", "text"],
+                            }
+                        }
+                        for region in regions
                     ]
                 }
             }
-        }
-        if topics:
-            query["query"]["bool"]["must"].extend(
-                [
-                    {
-                        "multi_match": {
-                            "query": wo,
-                            "fields": ["title", "text"],
-                        }
-                    }
-                    for word in topics
-                    for wo in word.split(" ")
-                ]
-            )
-        if regions:
-            query["query"]["bool"]["must"].append(
-                {
-                    "multi_match": {
-                        "query": " ".join(regions),
-                        "fields": ["title", "text"],
-                    }
-                }
-            )
+        ]
+        if regions is not None
+        else []
+    )
+    filter_query_list = filter_query["bool"]["must"] if filter_query else []
 
-    # If further filters, append them
-    if filter_query:
-        query["query"]["bool"]["must"].extend(filter_query["bool"]["must"])
+    query: dict[str, Any] = {
+        "query": {
+            "bool": {
+                "must": [
+                    {"term": {"section": "Abstract"}},
+                    *topic_query,
+                    *regions_query,
+                    *filter_query_list,
+                ]
+            }
+        }
+    }
 
     aggs: dict[str, Any] = {
         "relevant_ids": {
