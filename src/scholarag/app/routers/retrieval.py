@@ -230,7 +230,6 @@ async def article_count(
                 "multi_match": {
                     "query": topic,
                     "type": "phrase",
-                    "slop": 2,
                     "fields": ["title", "text"],
                 }
             }
@@ -248,7 +247,6 @@ async def article_count(
                             "multi_match": {
                                 "query": region,
                                 "type": "phrase",
-                                "slop": 2,
                                 "fields": ["title", "text"],
                             }
                         }
@@ -266,7 +264,6 @@ async def article_count(
         "query": {
             "bool": {
                 "must": [
-                    {"term": {"section": "Abstract"}},
                     *topic_query,
                     *regions_query,
                     *filter_query_list,
@@ -395,7 +392,6 @@ async def article_listing(
                 "multi_match": {
                     "query": topic,
                     "type": "phrase",
-                    "slop": 2,
                     "fields": ["title", "text"],
                 }
             }
@@ -413,7 +409,6 @@ async def article_listing(
                             "multi_match": {
                                 "query": region,
                                 "type": "phrase",
-                                "slop": 2,
                                 "fields": ["title", "text"],
                             }
                         }
@@ -431,7 +426,6 @@ async def article_listing(
         "query": {
             "bool": {
                 "must": [
-                    {"term": {"section": "Abstract"}},
                     *topic_query,
                     *regions_query,
                     *filter_query_list,
