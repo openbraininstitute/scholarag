@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 SETTINGS: dict[str, Any] = {
     "number_of_shards": 2,
     "number_of_replicas": 1,
+    "analysis": {"analyzer": {"default": {"type": "english"}}},
 }
 
 MAPPINGS_PARAGRAPHS: dict[str, Any] = {

@@ -305,7 +305,7 @@ def test_search(get_testing_ds_client, query):
             res_hits[0]["_source"]["text"]
             == "This document is a bad test, I don't want to retrieve it"
         )
-        assert res_hits[0]["_score"] == pytest.approx(0.7782316)
+        assert res_hits[0]["_score"] == pytest.approx(0.81427324)
         # test query + aggs.
         results = ds_client.search(index_doc, query, aggs=aggs)
         assert results["aggregations"]["unique_ids"]["buckets"][0]["doc_count"] == 1
@@ -376,13 +376,13 @@ def test_bm25_search(get_testing_ds_client, filter_db):
     if filter_db is None:
         assert len(res) == 2
         assert res[0]["text"] == "test of an amazing function"
-        assert res[0]["score"] == pytest.approx(0.5403367)
+        assert res[0]["score"] == pytest.approx(0.5504225)
     else:
         assert len(res) == 1
         assert (
             res[0]["text"] == "This document is a bad test, I don't want to retrieve it"
         )
-        assert res[0]["score"] == pytest.approx(0.37292093)
+        assert res[0]["score"] == pytest.approx(0.39019167)
 
     # Errors
     with pytest.raises(RuntimeError):
@@ -647,7 +647,7 @@ async def test_asearch(get_testing_async_ds_client, query):
             res_hits[0]["_source"]["text"]
             == "This document is a bad test, I don't want to retrieve it"
         )
-        assert res_hits[0]["_score"] == pytest.approx(0.7782316)
+        assert res_hits[0]["_score"] == pytest.approx(0.81427324)
         # test query + aggs.
         results = await ds_client.search(index_doc, query, aggs=aggs)
         assert results["aggregations"]["unique_ids"]["buckets"][0]["doc_count"] == 1
@@ -722,13 +722,13 @@ async def test_abm25_search(get_testing_async_ds_client, filter_db):
     if filter_db is None:
         assert len(res) == 2
         assert res[0]["text"] == "test of an amazing function"
-        assert res[0]["score"] == pytest.approx(0.5403367)
+        assert res[0]["score"] == pytest.approx(0.5504225)
     else:
         assert len(res) == 1
         assert (
             res[0]["text"] == "This document is a bad test, I don't want to retrieve it"
         )
-        assert res[0]["score"] == pytest.approx(0.37292093)
+        assert res[0]["score"] == pytest.approx(0.39019167)
 
 
 @pytest.mark.parametrize(
