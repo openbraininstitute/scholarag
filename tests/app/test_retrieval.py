@@ -254,7 +254,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == ["1", "16"]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["1"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
@@ -275,9 +275,11 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     response = response.json()
 
     assert len(response["items"]) == 4
-    assert sorted([resp["article_id"] for resp in response["items"][:2]]) == [
+    assert sorted([resp["article_id"] for resp in response["items"]]) == [
         "1",
         "16",
+        "5",
+        "56",
     ]  # They contain 1 and 6 in the text, they should score higher.
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
@@ -319,8 +321,8 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     params = {
         "number_results": 10,
         "topics": ["7 1"],
-        "date_to": "2022-07-01",
-    }  # Should return article 17.
+        "date_to": "2022-12-01",
+    }
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -330,7 +332,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == ["17"]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["11"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
