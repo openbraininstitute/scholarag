@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi_pagination import Page, paginate
 from httpx import AsyncClient
 
@@ -180,6 +180,20 @@ async def article_count(
     ds_client: Annotated[AsyncBaseSearch, Depends(get_ds_client)],
     filter_query: Annotated[dict[str, Any], Depends(get_query_from_params)],
     settings: Annotated[Settings, Depends(get_settings)],
+    topics: Annotated[
+        list[str] | None,
+        Query(
+            description="Keyword to be matched in text. AND matching (e.g. for TOPICS)."
+        ),
+    ] = None,
+    regions: Annotated[
+        list[str] | None,
+        Query(
+            description=(
+                "Keyword to be matched in text. OR matching (e.g. for BRAIN_REGIONS)."
+            )
+        ),
+    ] = None,
 ) -> ArticleCountResponse:
     """Article count based on keyword matching.
     \f
@@ -187,11 +201,15 @@ async def article_count(
     Parameters
     ----------
     ds_client
-        Document store client
+        Document store client.
     filter_query
         Filtering query for paragraph retrieval.
     settings
-        Global settings of the application
+        Global settings of the application.
+    topics
+        Keywords to be matched in text. AND matches list elements.
+    regions
+        Keywords to be matched in text. OR matches list elements.
 
     Returns
     -------
@@ -199,7 +217,60 @@ async def article_count(
     """  # noqa: D301, D400, D205
     start = time.time()
     logger.info("Finding unique articles matching the query ...")
-    query = filter_query
+
+    if not topics and not regions:
+        raise HTTPException(
+            status_code=422, detail="Please provide at least one region or topic."
+        )
+
+    # Match the keywords on abstract + title.
+    topic_query = (
+        [
+            {
+                "multi_match": {
+                    "query": topic,
+                    "type": "phrase",
+                    "fields": ["title", "text"],
+                }
+            }
+            for topic in topics
+        ]
+        if topics is not None
+        else []
+    )
+    regions_query = (
+        [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "multi_match": {
+                                "query": region,
+                                "type": "phrase",
+                                "fields": ["title", "text"],
+                            }
+                        }
+                        for region in regions
+                    ]
+                }
+            }
+        ]
+        if regions is not None
+        else []
+    )
+    filter_query_list = filter_query["bool"]["must"] if filter_query else []
+
+    query: dict[str, Any] = {
+        "query": {
+            "bool": {
+                "must": [
+                    *topic_query,
+                    *regions_query,
+                    *filter_query_list,
+                ]
+            }
+        }
+    }
 
     # Aggregation query.
     aggs = {
@@ -212,6 +283,7 @@ async def article_count(
             },
         }
     }
+
     results = await ds_client.search(
         index=settings.db.index_paragraphs, query=query, size=0, aggs=aggs
     )
@@ -246,11 +318,24 @@ async def article_count(
     },
 )
 async def article_listing(
-    request: Request,
     ds_client: Annotated[AsyncBaseSearch, Depends(get_ds_client)],
     httpx_client: Annotated[AsyncClient, Depends(get_httpx_client)],
     filter_query: Annotated[dict[str, Any], Depends(get_query_from_params)],
     settings: Annotated[Settings, Depends(get_settings)],
+    topics: Annotated[
+        list[str] | None,
+        Query(
+            description="Keyword to be matched in text. AND matching (e.g. for TOPICS)."
+        ),
+    ] = None,
+    regions: Annotated[
+        list[str] | None,
+        Query(
+            description=(
+                "Keyword to be matched in text. OR matching (e.g. for BRAIN_REGIONS)."
+            )
+        ),
+    ] = None,
     number_results: Annotated[
         int | None,
         Query(description="Number of results to return. Max 10 000.", ge=1, le=10_000),
@@ -278,11 +363,15 @@ async def article_listing(
     filter_query
         Filtering query for paragraph retrieval.
     settings
-        Global settings of the application
+        Global settings of the application.
+    topics
+        Keywords to be matched in text. AND matches list elements.
+    regions
+        Keywords to be matched in text. OR matches list elements.
     number_results
         Number of results to return. Max 10 000.
     sort_by_date
-        Sort by date True or False. If the latter, we sort by relevance
+        Sort by date True or False. If the latter, we sort by best match.
 
     Returns
     -------
@@ -291,25 +380,59 @@ async def article_listing(
     start = time.time()
     logger.info("Finding unique articles matching the query ...")
 
-    params = request.query_params
-    topics = params.getlist("topics")
-    regions = params.getlist("regions")
+    if not topics and not regions:
+        raise HTTPException(
+            status_code=422, detail="Please provide at least one region or topic."
+        )
 
-    if topics or regions:
-        query = {
-            "query": {
-                "bool": {
-                    "must": [
-                        {"match": {"text": " ".join(topics) + " " + " ".join(regions)}}
-                    ],
-                    "filter": filter_query,
+    # Match the keywords on abstract + title.
+    topic_query = (
+        [
+            {
+                "multi_match": {
+                    "query": topic,
+                    "type": "phrase",
+                    "fields": ["title", "text"],
                 }
-            },
+            }
+            for topic in topics
+        ]
+        if topics is not None
+        else []
+    )
+    regions_query = (
+        [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "multi_match": {
+                                "query": region,
+                                "type": "phrase",
+                                "fields": ["title", "text"],
+                            }
+                        }
+                        for region in regions
+                    ]
+                }
+            }
+        ]
+        if regions is not None
+        else []
+    )
+    filter_query_list = filter_query["bool"]["must"] if filter_query else []
+
+    query: dict[str, Any] = {
+        "query": {
+            "bool": {
+                "must": [
+                    *topic_query,
+                    *regions_query,
+                    *filter_query_list,
+                ]
+            }
         }
-    elif filter_query and not topics and not regions:
-        query = {"query": {"match_all": {}}, "filter": filter_query}
-    else:
-        query = {"query": {"match_all": {}}}
+    }
 
     aggs: dict[str, Any] = {
         "relevant_ids": {
@@ -331,6 +454,7 @@ async def article_listing(
     results = await ds_client.search(
         index=settings.db.index_paragraphs, query=query, size=0, aggs=aggs
     )
+
     logger.info(f"unique article retrieval took: {time.time() - start}s")
 
     docs = [

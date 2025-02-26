@@ -12,7 +12,11 @@ from scholarag.document_stores import AsyncBaseSearch, BaseSearch
 
 logger = logging.getLogger(__name__)
 
-SETTINGS: dict[str, Any] = {"number_of_shards": 2, "number_of_replicas": 1}
+SETTINGS: dict[str, Any] = {
+    "number_of_shards": 2,
+    "number_of_replicas": 1,
+    "analysis": {"analyzer": {"default": {"type": "english"}}},
+}
 
 MAPPINGS_PARAGRAPHS: dict[str, Any] = {
     "dynamic": "strict",
@@ -23,7 +27,7 @@ MAPPINGS_PARAGRAPHS: dict[str, Any] = {
         "pubmed_id": {"type": "keyword"},
         "arxiv_id": {"type": "keyword"},
         "title": {"type": "text"},
-        "authors": {"type": "keyword"},
+        "authors": {"fields": {"keyword": {"type": "keyword"}}, "type": "text"},
         "journal": {"type": "keyword"},
         "date": {"type": "date", "format": "yyyy-MM-dd"},
         "section": {"type": "keyword"},

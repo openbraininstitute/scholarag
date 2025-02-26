@@ -4,9 +4,8 @@ import json
 import logging
 from enum import Enum
 from functools import cache
-from typing import Annotated, AsyncIterator
+from typing import Annotated, Any, AsyncIterator
 
-from elasticsearch_dsl import Q, Search
 from fastapi import Depends, HTTPException, Query, Request
 from fastapi.security import HTTPBearer
 from httpx import AsyncClient, HTTPStatusError
@@ -176,20 +175,6 @@ async def get_reranker(
 
 
 def get_query_from_params(
-    topics: Annotated[
-        list[str] | None,
-        Query(
-            description="Keyword to be matched in text. AND matching (e.g. for TOPICS)."
-        ),
-    ] = None,
-    regions: Annotated[
-        list[str] | None,
-        Query(
-            description=(
-                "Keyword to be matched in text. OR matching (e.g. for BRAIN_REGIONS)."
-            )
-        ),
-    ] = None,
     article_types: Annotated[
         list[str] | None, Query(description="Article types allowed. OR matching")
     ] = None,
@@ -216,54 +201,22 @@ def get_query_from_params(
             pattern=r"^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$",
         ),
     ] = None,
-) -> dict[str, str] | None:
+) -> dict[str, dict[str, list[dict[str, Any]]]] | None:
     """Get the query parameters and generate an ES query for filtering."""
-    search = Search()
-    search_elems = []
-    if topics:
-        linked_tokens = [
-            (
-                " AND ".join(("(" + keyword + ")").split(" "))
-                if len(keyword.split(" ")) >= 2
-                else keyword
-            )
-            for keyword in topics
-        ]
-        topics_bool = f"({' AND '.join(linked_tokens)})"
-        search_elems.append(topics_bool)
-
-    if regions:
-        linked_tokens = [
-            (
-                " AND ".join(("(" + keyword + ")").split(" "))
-                if len(keyword.split(" ")) >= 2
-                else keyword
-            )
-            for keyword in regions
-        ]
-        regions_bool = f"({' OR '.join(linked_tokens)})"
-        search_elems.append(regions_bool)
-
-    if topics or regions:
-        q = Q(
-            "query_string", default_field="text", query=f"{' AND '.join(search_elems)}"
-        )
-        search = search.query(q)
+    query: dict[str, dict[str, list[dict[str, Any]]]] = {"bool": {"must": []}}
     if article_types:
-        search = search.query(Q("terms", article_type=article_types))
+        query["bool"]["must"].append({"terms": {"article_type": article_types}})
     if authors:
-        search = search.query(Q("terms", authors=authors))
+        query["bool"]["must"].append({"terms": {"authors.keyword": authors}})
     if journals:
-        search = search.query(Q("terms", journal=journals))
+        query["bool"]["must"].append({"terms": {"journal": journals}})
     if date_from:
-        search = search.query(Q("range", date={"gte": date_from}))
+        query["bool"]["must"].append({"range": {"date": {"gte": date_from}}})
     if date_to:
-        search = search.query(Q("range", date={"lte": date_to}))
+        query["bool"]["must"].append({"range": {"date": {"lte": date_to}}})
 
-    logger.info(
-        f"Searching the database with the query {json.dumps(search.to_dict())}."
-    )
-    return None if not search.to_dict() else search.to_dict()["query"]
+    logger.info(f"Searching the database with the query {json.dumps(query)}.")
+    return None if not query["bool"]["must"] else query
 
 
 class ErrorCode(Enum):

@@ -22,7 +22,6 @@ def test_retrieval(app_client, retriever_k, mock_http_calls):
     fake_rts, _ = override_rts(has_context=True)
 
     params = {
-        "regions": ["thalamus", "Giant Hippopotamidae"],
         "journals": ["1234-5678"],
         "date_to": "2022-12-31",
         "query": "aaa",
@@ -31,12 +30,6 @@ def test_retrieval(app_client, retriever_k, mock_http_calls):
     expected_query = {
         "bool": {
             "must": [
-                {
-                    "query_string": {
-                        "default_field": "text",
-                        "query": "(thalamus OR (Giant AND Hippopotamidae))",
-                    }
-                },
                 {"terms": {"journal": params["journals"]}},
                 {"range": {"date": {"lte": params["date_to"]}}},
             ]
@@ -115,14 +108,20 @@ def test_retrieval_no_answer_code_1(app_client):
         (["1"], ["1"], None, None, 10),
         (["1", "2"], ["3"], None, None, 0),
         (["1"], ["3", "4"], None, None, 2),
-        (["1", "2"], ["3", "4"], None, None, 0),
+        (["9", "1"], None, None, None, 1),
         (None, ["3", "4"], None, None, 11),
-        (["3", "4"], None, None, None, 1),
+        (None, ["3", "4"], "2022-12-01", None, 3),
+        (None, ["3", "4"], None, "2022-01-01", 3),
         (None, ["3 4"], None, None, 1),
-        (None, None, None, None, 19),
-        (None, None, "2022-12-01", None, 5),
-        (None, None, None, "2022-01-01", 6),
-        (None, None, "2022-03-01", "2022-06-01", 17),
+        (["0 1 2 3 4 5 6 7 8 9"], None, None, None, 0),
+        (
+            None,
+            ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"],
+            "2022-03-01",
+            "2022-06-01",
+            17,
+        ),
+        (None, ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], None, None, 19),
     ],
 )
 async def test_article_count(
@@ -158,6 +157,7 @@ async def test_article_count(
                 "paragraph_id": str(i),
                 "article_id": n1 + n2,  # 19 unique articles.
                 "journal": "8765-4321",
+                "section": "Abstract",
                 "date": datetime(2022, i % 12 + 1, 1).strftime("%Y-%m-%d"),
             },
         }
@@ -229,7 +229,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
                 "pubmed_id": "PM1234",
                 "authors": ["Nikemicsjanba"],
                 "article_type": "code",
-                "section": "abstract",
+                "section": "Abstract",
                 "date": datetime(2022, i % 12 + 1, 1).strftime("%Y-%m-%d"),
             },
         }
@@ -254,7 +254,7 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == ["1", "16"]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["1"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
@@ -275,9 +275,11 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     response = response.json()
 
     assert len(response["items"]) == 4
-    assert sorted([resp["article_id"] for resp in response["items"][:2]]) == [
+    assert sorted([resp["article_id"] for resp in response["items"]]) == [
         "1",
         "16",
+        "5",
+        "56",
     ]  # They contain 1 and 6 in the text, they should score higher.
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
@@ -319,8 +321,8 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     params = {
         "number_results": 10,
         "topics": ["7 1"],
-        "date_to": "2022-07-01",
-    }  # Should return article 17.
+        "date_to": "2022-12-01",
+    }
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
@@ -330,17 +332,16 @@ async def test_article_listing(get_testing_async_ds_client, mock_http_calls):
     assert response.status_code == 200
     response = response.json()
 
-    assert sorted([resp["article_id"] for resp in response["items"]]) == ["17"]
+    assert sorted([resp["article_id"] for resp in response["items"]]) == ["11"]
     expected_keys = set(ArticleMetadata.model_json_schema()["properties"].keys())
     for d in response["items"]:
         assert set(d.keys()) == expected_keys
 
 
 @pytest.mark.asyncio
-async def test_article_listing_by_date(get_testing_async_ds_client, request):
+async def test_article_listing_by_date(get_testing_async_ds_client):
     ds_client, parameters = get_testing_async_ds_client
 
-    request.getfixturevalue("mock_http_calls")
     test_settings = Settings(
         db={
             "db_type": (
@@ -376,7 +377,7 @@ async def test_article_listing_by_date(get_testing_async_ds_client, request):
                 "pubmed_id": "PM1234",
                 "authors": ["Nikemicsjanba"],
                 "article_type": "code",
-                "section": "abstract",
+                "section": "Abstract",
                 "date": datetime(2022, i % 12 + 1, 1).strftime("%Y-%m-%d"),
             },
         }
@@ -387,7 +388,12 @@ async def test_article_listing_by_date(get_testing_async_ds_client, request):
     await ds_client.client.indices.refresh()
     app.dependency_overrides[get_ds_client] = lambda: ds_client
 
-    params = {"number_results": 50, "sort_by_date": True}
+    params = {
+        "number_results": 50,
+        "topics": "paragraph",
+        "region": "paragraph",
+        "sort_by_date": True,
+    }
 
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
