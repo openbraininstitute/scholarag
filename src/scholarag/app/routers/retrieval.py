@@ -28,6 +28,7 @@ from scholarag.app.schemas import (
 from scholarag.document_stores import AsyncBaseSearch
 from scholarag.retrieve_metadata import MetaDataRetriever
 from scholarag.services import CohereRerankingService, RetrievalService
+from scholarag.utils import build_search_query
 
 router = APIRouter(
     prefix="/retrieval", tags=["Retrieval"], dependencies=[Depends(get_user_id)]
@@ -194,6 +195,7 @@ async def article_count(
             )
         ),
     ] = None,
+    resolve_hierarchy: bool = False,
 ) -> ArticleCountResponse:
     """Article count based on keyword matching.
     \f
@@ -218,59 +220,12 @@ async def article_count(
     start = time.time()
     logger.info("Finding unique articles matching the query ...")
 
-    if not topics and not regions:
-        raise HTTPException(
-            status_code=422, detail="Please provide at least one region or topic."
-        )
-
-    # Match the keywords on abstract + title.
-    topic_query = (
-        [
-            {
-                "multi_match": {
-                    "query": topic,
-                    "type": "phrase",
-                    "fields": ["title", "text"],
-                }
-            }
-            for topic in topics
-        ]
-        if topics is not None
-        else []
+    query = build_search_query(
+        topics=topics,
+        regions=regions,
+        filter_query=filter_query,
+        resolve_hierarchy=resolve_hierarchy,
     )
-    regions_query = (
-        [
-            {
-                "bool": {
-                    "should": [
-                        {
-                            "multi_match": {
-                                "query": region,
-                                "type": "phrase",
-                                "fields": ["title", "text"],
-                            }
-                        }
-                        for region in regions
-                    ]
-                }
-            }
-        ]
-        if regions is not None
-        else []
-    )
-    filter_query_list = filter_query["bool"]["must"] if filter_query else []
-
-    query: dict[str, Any] = {
-        "query": {
-            "bool": {
-                "must": [
-                    *topic_query,
-                    *regions_query,
-                    *filter_query_list,
-                ]
-            }
-        }
-    }
 
     # Aggregation query.
     aggs = {
@@ -348,6 +303,7 @@ async def article_listing(
             )
         ),
     ] = False,
+    resolve_hierarchy: bool = False,
 ) -> Page[ArticleMetadata]:
     """Article id listing based on keyword matching.
     \f
@@ -380,59 +336,12 @@ async def article_listing(
     start = time.time()
     logger.info("Finding unique articles matching the query ...")
 
-    if not topics and not regions:
-        raise HTTPException(
-            status_code=422, detail="Please provide at least one region or topic."
-        )
-
-    # Match the keywords on abstract + title.
-    topic_query = (
-        [
-            {
-                "multi_match": {
-                    "query": topic,
-                    "type": "phrase",
-                    "fields": ["title", "text"],
-                }
-            }
-            for topic in topics
-        ]
-        if topics is not None
-        else []
+    query = build_search_query(
+        topics=topics,
+        regions=regions,
+        filter_query=filter_query,
+        resolve_hierarchy=resolve_hierarchy,
     )
-    regions_query = (
-        [
-            {
-                "bool": {
-                    "should": [
-                        {
-                            "multi_match": {
-                                "query": region,
-                                "type": "phrase",
-                                "fields": ["title", "text"],
-                            }
-                        }
-                        for region in regions
-                    ]
-                }
-            }
-        ]
-        if regions is not None
-        else []
-    )
-    filter_query_list = filter_query["bool"]["must"] if filter_query else []
-
-    query: dict[str, Any] = {
-        "query": {
-            "bool": {
-                "must": [
-                    *topic_query,
-                    *regions_query,
-                    *filter_query_list,
-                ]
-            }
-        }
-    }
 
     aggs: dict[str, Any] = {
         "relevant_ids": {

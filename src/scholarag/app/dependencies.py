@@ -118,7 +118,7 @@ async def get_ds_client(
                 port=settings.db.port,
                 user=settings.db.user,
                 password=password,
-                use_ssl_and_verify_certs=True,
+                use_ssl_and_verify_certs=False,
             )
             yield ds_client
     finally:

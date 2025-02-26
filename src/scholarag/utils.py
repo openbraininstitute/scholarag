@@ -3,6 +3,11 @@
 import logging
 import re
 from pathlib import Path
+from typing import Any
+
+from fastapi import HTTPException
+
+from scholarag.hierarchy_resolving import get_descendants_names
 
 logger = logging.getLogger(__name__)
 
@@ -88,3 +93,102 @@ def find_files(
         raise ValueError(
             "Argument 'input_path' should be a path to an existing file or directory!"
         )
+
+
+def build_search_query(
+    topics: list[str] | None = None,
+    regions: list[str] | None = None,
+    filter_query: dict[str, Any] | None = None,
+    resolve_hierarchy: bool = False,
+) -> dict[str, Any]:
+    """
+    Build the Elasticsearch query and aggregations based on provided topics, regions, and filters.
+
+    Args:
+        topics: A list of topic keywords to match against "title" and "text".
+        regions: A list of region keywords to match against "title" and "text".
+        filter_query: Additional filter query dict with a structure containing {"bool": {"must": ...}}.
+        number_results: The number of results to include in the aggregation.
+        sort_by_date: If True, adjust the aggregation to sort by the "date" field instead of relevance.
+
+    Raises
+    ------
+        HTTPException: If neither topics nor regions are provided.
+
+    Returns
+    -------
+        query: The main query dict.
+    """
+    if not topics and not regions:
+        raise HTTPException(
+            status_code=422, detail="Please provide at least one region or topic."
+        )
+
+    # Build queries for topics.
+    topic_query = (
+        [
+            {
+                "multi_match": {
+                    "query": topic,
+                    "type": "phrase",
+                    "fields": ["title", "text"],
+                }
+            }
+            for topic in topics
+        ]
+        if topics is not None
+        else []
+    )
+
+    # Resolve names of the brain hierarchy
+    if regions and resolve_hierarchy:
+        expanded_brain_regions = []
+        for region in regions:
+            expanded_brain_regions.extend(
+                get_descendants_names(region, "brainregion_hierarchy.json")
+            )
+
+    else:
+        expanded_brain_regions = regions  # type: ignore
+
+    # Build queries for regions.
+    regions_query = (
+        [
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "multi_match": {
+                                "query": region,
+                                "type": "phrase",
+                                "fields": ["title", "text"],
+                            }
+                        }
+                        for region in expanded_brain_regions
+                    ]
+                }
+            }
+        ]
+        if regions is not None
+        else []
+    )
+
+    # Extract filter queries if provided.
+    filter_query_list = (
+        filter_query.get("bool", {}).get("must", []) if filter_query else []
+    )
+
+    # Construct the main query.
+    query: dict[str, Any] = {
+        "query": {
+            "bool": {
+                "must": [
+                    *topic_query,
+                    *regions_query,
+                    *filter_query_list,
+                ]
+            }
+        }
+    }
+
+    return query
