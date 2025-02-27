@@ -147,7 +147,6 @@ def build_search_query(
             expanded_brain_regions.extend(
                 get_descendants_names(region, "brainregion_hierarchy.json")
             )
-
     else:
         expanded_brain_regions = regions  # type: ignore
 

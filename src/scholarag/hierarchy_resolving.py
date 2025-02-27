@@ -191,6 +191,18 @@ def get_descendants_id(brain_region_id: int, json_path: str | Path) -> set[int]:
         region_meta = RegionMeta.load_config(json_path)
         hierarchy = region_meta.descendants(brain_region_int)
 
+        # If too many brain regions, it breaks OS.
+        if len(hierarchy) > 512:
+            hierarchy = set(
+                sorted(
+                    list(hierarchy),
+                    key=lambda x: (
+                        region_meta.st_level[x] is not None,
+                        region_meta.st_level[x],
+                    ),
+                )[:512]
+            )
+
     except ValueError:
         logger.info(
             f"The brain region {brain_region_id} didn't end with an int. Returning only"
