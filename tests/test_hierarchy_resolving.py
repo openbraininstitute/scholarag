@@ -11,44 +11,14 @@ from scholarag.hierarchy_resolving import (
 @pytest.mark.parametrize(
     "brain_region_id,expected_descendants",
     [
-        (68, {68}),
-        (
-            985,
-            {
-                320,
-                648,
-                844,
-                882,
-                943,
-                985,
-                3718675619,
-                1758306548,
-            },
-        ),
-        (
-            369,
-            {
-                450,
-                369,
-                1026,
-                854,
-                577,
-                625,
-                945,
-                1890964946,
-                3693772975,
-            },
-        ),
+        (68, [68]),
+        (985, [985, 320, 648, 844, 943, 882, 3718675619, 1758306548]),
+        (369, [369, 577, 1026, 450, 625, 945, 854, 3693772975, 1890964946]),
         (
             178,
-            {
-                316,
-                178,
-                300,
-                1043765183,
-            },
+            [178, 300, 316, 1043765183],
         ),
-        ("not-a-int", {"not-a-int"}),
+        ("not-a-int", ["not-a-int"]),
     ],
 )
 def test_get_descendants(brain_region_id, expected_descendants, brain_region_json_path):

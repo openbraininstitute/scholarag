@@ -193,10 +193,9 @@ def get_descendants_id(brain_region_id: int, json_path: str | Path) -> list[int]
 
         hierarchy = sorted(
             hierarchy,
-            key=lambda x: (
-                region_meta.st_level[x] is not None,
-                region_meta.st_level[x],
-            ),
+            key=lambda x: float("inf")  # type: ignore
+            if region_meta.st_level[x] is None
+            else region_meta.st_level[x],
         )
 
     except ValueError:

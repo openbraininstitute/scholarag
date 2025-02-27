@@ -195,7 +195,7 @@ async def article_count(
             )
         ),
     ] = None,
-    resolve_hierarchy: bool = False,
+    resolve_hierarchy: bool = True,
 ) -> ArticleCountResponse:
     """Article count based on keyword matching.
     \f
@@ -303,7 +303,7 @@ async def article_listing(
             )
         ),
     ] = False,
-    resolve_hierarchy: bool = False,
+    resolve_hierarchy: bool = True,
 ) -> Page[ArticleMetadata]:
     """Article id listing based on keyword matching.
     \f
