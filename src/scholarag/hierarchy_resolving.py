@@ -169,7 +169,7 @@ def load_names_mapping(json_path: Path | str) -> dict[int, str]:
     return {k: v.lower() for k, v in KG_hierarchy["names"].items()}
 
 
-def get_descendants_id(brain_region_id: int, json_path: str | Path) -> set[int]:
+def get_descendants_id(brain_region_id: int, json_path: str | Path) -> list[int]:
     """Get all descendant of a brain region id.
 
     Parameters
@@ -189,29 +189,25 @@ def get_descendants_id(brain_region_id: int, json_path: str | Path) -> set[int]:
 
         # Get the descendant ids of this BR (as int).
         region_meta = RegionMeta.load_config(json_path)
-        hierarchy = region_meta.descendants(brain_region_int)
+        hierarchy = list(region_meta.descendants(brain_region_int))
 
-        # If too many brain regions, it breaks OS.
-        if len(hierarchy) > 512:
-            hierarchy = set(
-                sorted(
-                    list(hierarchy),
-                    key=lambda x: (
-                        region_meta.st_level[x] is not None,
-                        region_meta.st_level[x],
-                    ),
-                )[:512]
-            )
+        hierarchy = sorted(
+            hierarchy,
+            key=lambda x: (
+                region_meta.st_level[x] is not None,
+                region_meta.st_level[x],
+            ),
+        )
 
     except ValueError:
         logger.info(
             f"The brain region {brain_region_id} didn't end with an int. Returning only"
             " the parent one."
         )
-        hierarchy = {brain_region_id}
+        hierarchy = [brain_region_id]
     except IOError:
         logger.warning(f"The file {json_path} doesn't exist.")
-        hierarchy = {brain_region_id}
+        hierarchy = [brain_region_id]
 
     return hierarchy
 

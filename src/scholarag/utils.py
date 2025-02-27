@@ -147,6 +147,11 @@ def build_search_query(
             expanded_brain_regions.extend(
                 get_descendants_names(region, "brainregion_hierarchy.json")
             )
+        # limit query length because of OS limit of 1024
+        max_query_len = 1024 - len(topics) if topics else 1024
+        if 2 * len(expanded_brain_regions) > max_query_len:  # 2 queries per region
+            expanded_brain_regions = expanded_brain_regions[: max_query_len // 2]
+
     else:
         expanded_brain_regions = regions  # type: ignore
 
