@@ -4,7 +4,7 @@ import json
 import logging
 import numbers
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Iterator
 
 logger = logging.getLogger(__name__)
 
@@ -144,70 +144,6 @@ class RegionMeta:
         self.children_ids = to_load["children_ids"]
 
         return self
-
-    @classmethod
-    def from_KG_dict(cls, KG_hierarchy: dict[str, Any]) -> "RegionMeta":
-        """Construct an instance from the json of the Knowledge Graph.
-
-        Parameters
-        ----------
-        KG_hierarchy : dict
-            The dictionary of the region hierarchy, provided by the KG.
-
-        Returns
-        -------
-        region_meta : RegionMeta
-            The initialized instance of this class.
-        """
-        self = cls()
-
-        for brain_region in KG_hierarchy["defines"]:
-            # Filter out wrong elements of the KG.
-            if "identifier" in brain_region.keys():
-                region_id = int(brain_region["identifier"])
-
-                # Check if we are at root.
-                if "isPartOf" not in brain_region.keys():
-                    self.root_id = int(region_id)
-                    self.parent_id[region_id] = self.background_id
-                else:
-                    # Strip url to only keep ID.
-                    self.parent_id[region_id] = int(
-                        brain_region["isPartOf"][0].rsplit("/")[-1]
-                    )
-                self.children_ids[region_id] = []
-
-                self.name_[region_id] = brain_region["label"]
-
-                if "st_level" not in brain_region.keys():
-                    self.st_level[region_id] = None
-                else:
-                    self.st_level[region_id] = brain_region["st_level"]
-
-        # Once every parents are set, we can deduce all childrens.
-        for child_id, parent_id in self.parent_id.items():
-            if parent_id is not None:
-                self.children_ids[int(parent_id)].append(child_id)
-
-        return self
-
-    @classmethod
-    def load_json(cls, json_path: Path | str) -> "RegionMeta":
-        """Load the structure graph from a JSON file and create a Class instance.
-
-        Parameters
-        ----------
-        json_path : str or pathlib.Path
-
-        Returns
-        -------
-        RegionMeta
-            The initialized instance of this class.
-        """
-        with open(json_path) as fh:
-            KG_hierarchy = json.load(fh)
-
-        return cls.from_KG_dict(KG_hierarchy)
 
 
 def load_names_mapping(json_path: Path | str) -> dict[int, str]:

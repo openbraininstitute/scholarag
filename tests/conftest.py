@@ -10,6 +10,7 @@ import string
 import threading
 import time
 from itertools import chain
+from pathlib import Path
 from unittest.mock import patch
 
 import aiobotocore
@@ -444,6 +445,12 @@ def config(request, region, signature_version):
         connect_timeout=connect_timeout,
         **config_kwargs,
     )
+
+
+@pytest.fixture
+def brain_region_json_path():
+    br_path = Path(__file__).parent / "data" / "brainregion_hierarchy.json"
+    return br_path
 
 
 @pytest.fixture
