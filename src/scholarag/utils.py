@@ -180,9 +180,7 @@ def build_search_query(
     )
 
     # Extract filter queries if provided.
-    filter_query_list = (
-        filter_query.get("bool", {}).get("must", []) if filter_query else []
-    )
+    filter_query_list = filter_query["bool"]["must"] if filter_query else []
 
     # Construct the main query.
     query: dict[str, Any] = {

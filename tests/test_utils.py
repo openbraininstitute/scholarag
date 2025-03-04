@@ -185,10 +185,6 @@ def test_resolve_hierarchy(monkeypatch):
         },
     ]
 
-    must_list = result["query"]["bool"]["must"]
-    region_query = next(
-        (item for item in must_list if "bool" in item and "should" in item["bool"]),
-        None,
-    )
+    region_query = result["query"]["bool"]["must"][0]
     assert region_query is not None
     assert region_query["bool"]["should"] == expected_should
