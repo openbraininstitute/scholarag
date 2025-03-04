@@ -140,20 +140,22 @@ def build_search_query(
         else []
     )
 
-    # Resolve names of the brain hierarchy
-    if regions and resolve_hierarchy:
+    # Resolve names of the brain hierarchy if there is only one
+    if resolve_hierarchy and regions and len(regions) == 1:
         expanded_brain_regions = []
         for region in regions:
             expanded_brain_regions.extend(
                 get_descendants_names(region, "brainregion_hierarchy.json")
             )
         # limit query length because of OS limit of 1024
-        max_query_len = 1024 - len(topics) if topics else 1024
+        max_query_len = (
+            1024
+            - (len(topics) if topics else 0)
+            - (len(filter_query) if filter_query else 0)
+        )
         if 2 * len(expanded_brain_regions) > max_query_len:  # 2 queries per region
             expanded_brain_regions = expanded_brain_regions[: max_query_len // 2]
-
-    else:
-        expanded_brain_regions = regions  # type: ignore
+        regions = expanded_brain_regions
 
     # Build queries for regions.
     regions_query = (
@@ -168,7 +170,7 @@ def build_search_query(
                                 "fields": ["title", "text"],
                             }
                         }
-                        for region in expanded_brain_regions
+                        for region in regions
                     ]
                 }
             }

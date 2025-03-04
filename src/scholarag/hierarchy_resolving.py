@@ -161,12 +161,8 @@ def load_names_mapping(json_path: Path | str) -> dict[int, str]:
     with open(json_path) as fh:
         KG_hierarchy = json.load(fh)
 
-    for k1 in KG_hierarchy.keys():
-        if not isinstance(KG_hierarchy[k1], int):
-            KG_hierarchy[k1] = {int(k): v for k, v in KG_hierarchy[k1].items()}
-
     # return the lower case of id : "names"
-    return {k: v.lower() for k, v in KG_hierarchy["names"].items()}
+    return {int(k): v.lower() for k, v in KG_hierarchy["names"].items()}
 
 
 def get_descendants_id(brain_region_id: int, json_path: str | Path) -> list[int]:
@@ -222,7 +218,8 @@ def get_descendants_names(incoming_region: str, json_path: str | Path) -> list[s
     -------
         List[str]: List of brain region names corresponding to the "incoming_regions".
     """
-    id_to_br = load_names_mapping(json_path)
+    region_meta = RegionMeta.load_config(json_path)
+    id_to_br = {id: br.lower() for id, br in region_meta.name_.items()}
     br_to_id = {name: id for id, name in id_to_br.items()}
 
     # Convert brain region names to IDs using the inverse mapping.
@@ -230,8 +227,15 @@ def get_descendants_names(incoming_region: str, json_path: str | Path) -> list[s
     if not region_id:
         return [incoming_region]
 
-    # Get descendant IDs.
-    descendant_ids = get_descendants_id(region_id, json_path)
+    # Get descendants IDs
+    descendant_ids = list(region_meta.descendants(region_id))
+    # sort when we want to remove it.
+    descendant_ids = sorted(
+        descendant_ids,
+        key=lambda x: float("inf")  # type: ignore
+        if region_meta.st_level[x] is None
+        else region_meta.st_level[x],
+    )
 
     # Convert descendant IDs back to brain region names.
     result_regions = [
