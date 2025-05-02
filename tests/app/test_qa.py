@@ -41,7 +41,28 @@ def test_generative_qa(app_client, mock_http_calls):
         "bool": {
             "must": [
                 {"terms": {"article_type": params["article_types"]}},
-                {"terms": {"authors.keyword": params["authors"]}},
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "wildcard": {
+                                    "authors.keyword": {
+                                        "value": " ".join(
+                                            [f"*{term}*" for term in author.split(" ")]
+                                        ),
+                                        "case_insensitive": True,
+                                    }
+                                }
+                            }
+                            for author in [
+                                "Emilie Delattre",
+                                "Jan Krepl",
+                                "Csaba Zsolnai",
+                                "Nicolas Frank",
+                            ]
+                        ]
+                    }
+                },
                 {"range": {"date": {"gte": params["date_from"]}}},
                 {"range": {"date": {"lte": params["date_to"]}}},
             ]
