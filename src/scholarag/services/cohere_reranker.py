@@ -1,5 +1,6 @@
 """Class to use the Cohere reranking service."""
 
+import json
 import logging
 import time
 from typing import Any
@@ -136,7 +137,8 @@ class CohereRerankingService(BaseModel):
         indices: tuple[int]
             Initial indices of the contexts before the reranking phase.
         """
-        contexts_text = [context["text"] for context in contexts]
+        contexts_text = self._extract_document_content(contexts)
+
         logger.info(
             f"Reranking {len(contexts_text)} contexts with Cohere reranker. "
             f"Keeping the {reranker_k} most relevant ones..."
@@ -154,3 +156,17 @@ class CohereRerankingService(BaseModel):
         new_contexts = [contexts[i] for i in indices]
         new_contexts_text = list(reranked_contexts)
         return new_contexts, new_contexts_text, scores, indices
+
+    @staticmethod
+    def _extract_document_content(contexts: list[dict[str, Any]]) -> list[str]:
+        """Extract content of DB documents to make it Cohere compatible"""
+        return [
+            json.dumps(
+                {
+                    "title": context["title"],
+                    "abstract": context.get("abstract"),
+                    "text": context["text"],
+                }
+            )
+            for context in contexts
+        ]

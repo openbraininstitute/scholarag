@@ -135,9 +135,21 @@ async def test_cohere_reranker_rerank(reranker_k):
     )
 
     contexts = [
-        {"text": "The mountains in Switzerland are impressive"},
-        {"text": "Yesterday was a nice day"},
-        {"text": "Berlin is the capital of Germany"},
+        {
+            "text": "The mountains in Switzerland are impressive",
+            "title": "Mountains in Switzerland",
+            "abstract": "Great abstract.",
+        },
+        {
+            "text": "Yesterday was a nice day",
+            "title": "My day",
+            "abstract": "Great day.",
+        },
+        {
+            "text": "Berlin is the capital of Germany",
+            "title": "History day",
+            "abstract": "Germany is a nice country.",
+        },
     ]
     crs = CohereRerankingService(api_key="asdadafsdazf")
     crs.async_client = async_client_mock
@@ -154,9 +166,21 @@ async def test_cohere_reranker_rerank(reranker_k):
     assert len(indices) == reranker_k
 
     expected_new_contexts = [
-        {"text": "Berlin is the capital of Germany"},
-        {"text": "The mountains in Switzerland are impressive"},
-        {"text": "Yesterday was a nice day"},
+        {
+            "text": "Berlin is the capital of Germany",
+            "title": "History day",
+            "abstract": "Germany is a nice country.",
+        },
+        {
+            "text": "The mountains in Switzerland are impressive",
+            "title": "Mountains in Switzerland",
+            "abstract": "Great abstract.",
+        },
+        {
+            "text": "Yesterday was a nice day",
+            "title": "My day",
+            "abstract": "Great day.",
+        },
     ]
 
     assert new_contexts == expected_new_contexts[:reranker_k]

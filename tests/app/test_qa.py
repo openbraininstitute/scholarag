@@ -254,7 +254,11 @@ def test_generative_qa_metadata_retriever_no_external_apis(app_client):
     def get_settings_no_external_apis():
         settings = Settings(
             db=SettingsDB(
-                db_type="opensearch", index_paragraphs="dummy", host="", port=0
+                db_type="opensearch",
+                index_paragraphs="dummy",
+                host="",
+                port=0,
+                index_journals="dummy",
             ),
             metadata=SettingsMetadata(external_apis=False),
         )
