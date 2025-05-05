@@ -207,7 +207,25 @@ def get_query_from_params(
     if article_types:
         query["bool"]["must"].append({"terms": {"article_type": article_types}})
     if authors:
-        query["bool"]["must"].append({"terms": {"authors.keyword": authors}})
+        query["bool"]["must"].append(
+            {
+                "bool": {
+                    "should": [
+                        {
+                            "wildcard": {
+                                "authors.keyword": {
+                                    "value": " ".join(
+                                        [f"*{term}*" for term in author.split(" ")]
+                                    ),
+                                    "case_insensitive": True,
+                                }
+                            }
+                        }
+                        for author in authors
+                    ]
+                }
+            }
+        )
     if journals:
         query["bool"]["must"].append({"terms": {"journal": journals}})
     if date_from:

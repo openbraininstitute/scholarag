@@ -184,7 +184,23 @@ def test_get_query_from_params():
         "bool": {
             "must": [
                 {"terms": {"article_type": ["publication", "review"]}},
-                {"terms": {"authors.keyword": ["Guy Manderson", "Joe Guy"]}},
+                {
+                    "bool": {
+                        "should": [
+                            {
+                                "wildcard": {
+                                    "authors.keyword": {
+                                        "value": " ".join(
+                                            [f"*{term}*" for term in author.split(" ")]
+                                        ),
+                                        "case_insensitive": True,
+                                    }
+                                }
+                            }
+                            for author in authors
+                        ]
+                    }
+                },
                 {"terms": {"journal": ["1111-1111"]}},
                 {"range": {"date": {"gte": "2020-01-01"}}},
                 {"range": {"date": {"lte": "2020-01-02"}}},
