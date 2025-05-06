@@ -333,13 +333,25 @@ class OpenSearch(BaseSearch):
             raise RuntimeError("Index for documents not in OS")
 
         if filter_query is not None:
-            query_dict = {
+            query_dict: dict[str, dict[str, Any]] = {
                 "query": {
-                    "bool": {"must": {"match": {"text": query}}, "filter": filter_query}
+                    "bool": {
+                        "must": {
+                            "multi_match": {
+                                "query": query,
+                                "fields": ["title^1.2", "text"],
+                            }
+                        },
+                        "filter": filter_query,
+                    }
                 }
             }
         else:
-            query_dict = {"query": {"bool": {"must": {"match": {"text": query}}}}}
+            query_dict = {
+                "query": {
+                    "multi_match": {"query": query, "fields": ["title^1.2", "text"]}
+                }
+            }
 
         res = self.client.search(
             index=index_doc,
@@ -654,13 +666,25 @@ class AsyncOpenSearch(AsyncBaseSearch):
             raise RuntimeError("Index for documents not in OS")
 
         if filter_query is not None:
-            query_dict = {
+            query_dict: dict[str, dict[str, Any]] = {
                 "query": {
-                    "bool": {"must": {"match": {"text": query}}, "filter": filter_query}
+                    "bool": {
+                        "must": {
+                            "multi_match": {
+                                "query": query,
+                                "fields": ["title^1.2", "text"],
+                            }
+                        },
+                        "filter": filter_query,
+                    }
                 }
             }
         else:
-            query_dict = {"query": {"bool": {"must": {"match": {"text": query}}}}}
+            query_dict = {
+                "query": {
+                    "multi_match": {"query": query, "fields": ["title^1.2", "text"]}
+                }
+            }
 
         res = await self.client.search(
             index=index_doc,

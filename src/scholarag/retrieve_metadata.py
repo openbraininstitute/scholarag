@@ -87,8 +87,7 @@ class MetaDataRetriever:
     ) -> dict[str, Any]:
         """Schedule the metadata retrieval and execute all of the tasks."""
         issns = [
-            context.get("journal") if "journal" in context else None
-            for context in contexts
+            context["journal"] if "journal" in context else None for context in contexts
         ]
 
         if "impact_factors" in to_retrieve:

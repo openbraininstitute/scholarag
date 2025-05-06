@@ -159,7 +159,7 @@ class CohereRerankingService(BaseModel):
 
     @staticmethod
     def _extract_document_content(contexts: list[dict[str, Any]]) -> list[str]:
-        """Extract content of DB documents to make it Cohere compatible"""
+        """Extract content of DB documents to make it Cohere compatible."""
         return [
             json.dumps(
                 {
