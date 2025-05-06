@@ -253,11 +253,11 @@ async def retrieve_metadata(
     """
     contexts = [contexts[i] for i in answer.paragraphs]
     fetched_metadata = await metadata_retriever.retrieve_metadata(
-        contexts,
-        ds_client,
-        index_journals,
-        index_paragraphs,
-        httpx_client,
+        contexts=contexts,
+        ds_client=ds_client,
+        db_if_articles=index_journals,
+        db_index_paragraphs=index_paragraphs,
+        httpx_client=httpx_client,
         to_retrieve=["citation_counts", "impact_factors", "journal_names"],
     )
 
