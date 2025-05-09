@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.12] - 09.05.2025
+
+### Changed
+- Reranking based on text + abstract + title.
+- Match on text + title.
 
 ## [0.0.11] - 05.05.2025
 

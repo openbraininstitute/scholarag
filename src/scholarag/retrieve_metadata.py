@@ -6,7 +6,7 @@ import asyncio
 import json
 import logging
 import ssl
-from typing import Any, Callable, Coroutine
+from typing import Any, Callable, Coroutine, Literal
 
 import httpx
 
@@ -77,42 +77,73 @@ class MetaDataRetriever:
     async def retrieve_metadata(
         self,
         contexts: list[dict[str, Any]],
-        ds_client: AsyncBaseSearch,
-        db_if_articles: str | None,
-        db_index_paragraphs: str,
-        httpx_client: httpx.AsyncClient,
+        ds_client: AsyncBaseSearch | None = None,
+        db_if_articles: str | None | None = None,
+        db_index_paragraphs: str | None = None,
+        httpx_client: httpx.AsyncClient | None = None,
+        to_retrieve: list[
+            Literal["impact_factors", "abstracts", "citation_counts", "journal_names"]
+        ] = ["impact_factors", "abstracts", "citation_counts", "journal_names"],
     ) -> dict[str, Any]:
         """Schedule the metadata retrieval and execute all of the tasks."""
         issns = [
             context["journal"] if "journal" in context else None for context in contexts
         ]
-        dois = [context["doi"] for context in contexts if context["doi"] is not None]
-        article_ids = [context["article_id"] for context in contexts]
 
-        self.schedule_bulk_request(
-            get_impact_factors,
-            **{
-                "ds_client": ds_client,
-                "issns": issns,
-                "db_index_impact_factor": db_if_articles,
-            },
-        )
-        self.schedule_non_bulk_requests(
-            recreate_abstract,
-            article_ids,
-            **{
-                "ds_client": ds_client,
-                "db_index_paragraphs": db_index_paragraphs,
-            },
-        )
+        if "impact_factors" in to_retrieve:
+            if not ds_client or not db_if_articles:
+                raise ValueError(
+                    "Database client and impact factor index must be provided to retrieve the impact factors."
+                )
+
+            self.schedule_bulk_request(
+                get_impact_factors,
+                **{
+                    "ds_client": ds_client,
+                    "issns": issns,
+                    "db_index_impact_factor": db_if_articles,
+                },
+            )
+
+        if "abstracts" in to_retrieve:
+            if not ds_client or not db_index_paragraphs:
+                raise ValueError(
+                    "Database client and paragraphs index must be provided to retrieve the abstracts."
+                )
+
+            article_ids = [context["article_id"] for context in contexts]
+            self.schedule_non_bulk_requests(
+                recreate_abstract,
+                article_ids,
+                **{
+                    "ds_client": ds_client,
+                    "db_index_paragraphs": db_index_paragraphs,
+                },
+            )
 
         if self.external_apis:
-            self.schedule_non_bulk_requests(
-                get_citation_count, dois, **{"httpx_client": httpx_client}
-            )
-            self.schedule_non_bulk_requests(
-                get_journal_name, issns, **{"httpx_client": httpx_client}
-            )
+            if "citation_counts" in to_retrieve:
+                if not httpx_client:
+                    raise ValueError(
+                        "The httpx client must be provided to get the citation counts."
+                    )
+
+                dois = [
+                    context["doi"] for context in contexts if context["doi"] is not None
+                ]
+                self.schedule_non_bulk_requests(
+                    get_citation_count, dois, **{"httpx_client": httpx_client}
+                )
+
+            if "journal_names" in to_retrieve:
+                if not httpx_client:
+                    raise ValueError(
+                        "The httpx client must be provided to get the citation counts."
+                    )
+
+                self.schedule_non_bulk_requests(
+                    get_journal_name, issns, **{"httpx_client": httpx_client}
+                )
 
         fetched_metadata = await self.fetch()
         return fetched_metadata

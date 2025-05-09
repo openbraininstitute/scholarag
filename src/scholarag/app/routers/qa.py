@@ -500,6 +500,22 @@ async def streamed_generative_qa(
         )
     logger.info(f"Semantic search took {time.time() - start}s")
 
+    metadata_retriever = MetaDataRetriever(
+        external_apis=settings.metadata.external_apis
+    )
+
+    fetched_abstracts = await metadata_retriever.retrieve_metadata(
+        contexts=contexts,
+        ds_client=ds_client,
+        db_index_paragraphs=settings.db.index_paragraphs,
+        to_retrieve=["abstracts"],
+    )
+    abstracts = fetched_abstracts["recreate_abstract"]
+    contexts = [
+        {**context, "abstract": abstracts[context.get("article_id")]}
+        for context in contexts
+    ]
+
     if rs is None or not request.use_reranker:
         contexts_text = [context["text"] for context in contexts]
         indices = tuple(range(len(contexts_text)))
@@ -510,10 +526,6 @@ async def streamed_generative_qa(
             contexts=contexts,
             reranker_k=request.reranker_k,
         )
-
-    metadata_retriever = MetaDataRetriever(
-        external_apis=settings.metadata.external_apis
-    )
 
     return StreamingResponse(
         stream_response(
